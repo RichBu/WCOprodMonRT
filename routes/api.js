@@ -140,7 +140,7 @@ router.post('/update-rt-data', function(req, res, next) {
 
         }); //query to write to user log	
     } else {
-        var actionDone = 'api-post log file';
+        var actionDone = 'api-post RT data';
         var actionString = 'tried to add but timed out';
 
         let userLogRec = new userLogRecStoreType(
