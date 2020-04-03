@@ -1,10 +1,8 @@
 
 
-//for device logger
-
-DROP DATABASE IF EXISTS lb4a4vdbieztvy2i;
-CREATE DATABASE lb4a4vdbieztvy2i;
-USE lb4a4vdbieztvy2i;
+DROP DATABASE IF EXISTS oc9ymp1ljwq5wln2;
+CREATE DATABASE oc9ymp1ljwq5wln2;
+USE oc9ymp1ljwq5wln2;
 
 
 CREATE TABLE ip_log (
@@ -72,10 +70,7 @@ CREATE TABLE event_bymach (
 );
 
 
-CREATE TABLE files_log (
-    files_log_id INT NOT NULL AUTO_INCREMENT,
-    time_of_upload_str VARCHAR(20),  
-    filename_str VARCHAR(75),
-    PRIMARY KEY (files_log_id)
-);
-
+CREATE TABLE MachRT (
+    mach_num VARCHAR(2),
+    mach_stat_code VARCHAR(2)
+)
