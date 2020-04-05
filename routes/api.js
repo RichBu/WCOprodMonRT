@@ -37,11 +37,11 @@ class userLogRecStoreType {
 router.post('/update-rt-data', function(req, res, next) {
     const numMach = 9;
 
-    var M1 = req.body.m1;
-    var M2 = req.body.m2;
-    var M3 = req.body.m3;
-    var M4 = req.body.m4;
-    var M5 = req.body.m5;
+    var M1 = req.body.M1;
+    var M2 = req.body.M2;
+    var M3 = req.body.M3;
+    var M4 = req.body.M4;
+    var M5 = req.body.M5;
     var M6 = req.body.M6;
     var M7 = req.body.M7;
     var M8 = req.body.M8;
@@ -76,67 +76,68 @@ router.post('/update-rt-data', function(req, res, next) {
         ], function(err, response) {
             //log has been written, now write to the log file table
 
-            for (var machLp = 0; machLp < (numMach - 1); machLp++) {
+            for (var machLp = 0; machLp < (numMach); machLp++) {
                 //loop thru all of the machines
                 var outMachNum = "";
-                var outmachCode = "";
+                var outMachCode = "";
                 switch (machLp) {
                     case 0:
                         outMachNum = "01";
-                        outmachCode = M1;
+                        outMachCode = M1;
                         break;
                     case 1:
                         outMachNum = "02";
-                        outmachCode = M2;
+                        outMachCode = M2;
                         break;
                     case 2:
                         outMachNum = "03";
-                        outmachCode = M3;
+                        outMachCode = M3;
                         break;
                     case 3:
                         outMachNum = "04";
-                        outmachCode = M4;
+                        outMachCode = M4;
                         break;
                     case 4:
                         outMachNum = "05";
-                        outmachCode = M5;
+                        outMachCode = M5;
                         break;
                     case 5:
                         outMachNum = "06";
-                        outmachCode = M6;
+                        outMachCode = M6;
                         break;
                     case 6:
                         outMachNum = "07";
-                        outmachCode = M7;
+                        outMachCode = M7;
                         break;
                     case 7:
                         outMachNum = "08";
-                        outmachCode = M8;
+                        outMachCode = M8;
                         break;
                     case 8:
                         outMachNum = "09";
-                        outmachCode = M9;
+                        outMachCode = M9;
                         break;
                 }; //switch statement
 
                 //now need to make the query be synchronous instead of async
                 var continF = 0
-                var query = "UPDATE mach_rt SET mach_num=?,mach_state_code=? WHERE mach_num=?";
-                connection.query(query, [
-                    outMachNum,
+                var query2 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
+                connection.query(query2, [
                     outMachCode,
                     outMachNum
-                ], function(err, response) {
+                ], function(err2, response2) {
                     //should check if there is an error
                     continF = 1;
                 });
 
-                while (continF == 0) {
-                    var A = 0;
-                    var B = A + 1;
-                    //hangup until continF=1
-                };
+                //while (continF == 0) {
+                //    var A = 0;
+                //    var B = A + 1;
+                //hangup until continF=1
+                //};
             }; //for loop
+            res.status(201).send(); //201 means record has been created
+
 
         }); //query to write to user log	
     } else {

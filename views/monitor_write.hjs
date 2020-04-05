@@ -1,0 +1,189 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>WCO Production Monitor</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!--  Designed by Rich Budek @  www.RichBudek.com -->
+		<!--  all rights reserved by Rich Budek -->
+		<meta name="description" content="WCO Production Monitor">
+		<meta name="author" content="Rich Budek">
+		<meta name="author_website" content="www.RichBudek.com">
+		<meta name="copyright" content="Rich Budek at www.RichBudek.com all rights reserved">
+		<meta name='design package' content="Rich Budek crooked little fingers">
+        <!--    -->
+
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.js"></script>
+
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+           crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r"
+            crossorigin="anonymous">
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+          crossorigin="anonymous"></script>
+
+		<link rel='stylesheet' type='text/css' href='/css/calc_oval.css'>
+	</head>
+
+	<body>
+        <noscript>
+          You need to enable JavaScript to run this app.
+        </noscript>
+        <header class="container text-center">
+            <div class="row" style="padding: 20px 0px 0px 0px;" >
+				<!--Site Logo-->
+                <div class="col-xs-4">
+                    <!-- 
+						<a href='/'><img src="/images/genielogo.png" alt='TableTop Genie Logo' id='pageLogo' class='img img-thumbnail'></a>
+					-->	
+                </div>
+                <div class="col-xs-4">
+                    <h1>Write to RT data</h1>
+                </div>
+                <div class="col-xs-4">
+  			      <button id="btn-about" type="button" class="btn btn-primary aboutButton" >About</button>
+                </div>
+            </div>
+			<hr/>
+        </header>
+		<div class="backgroundIndexStyle">
+		</div>
+		<div style="padding: 40px 0px 40px 0px;">
+  				<div class="col-lg-2 col-md-2 col-sm-2 col-xs-1 transDivStyle">
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-8 col-xs-10 inputDivStyle">
+					<div class="row">
+						<form id="monitor-form" role="form" action="/api/update-rt-data" method="post">
+						<input type="text" name="M1" id='M1' class="input3" placeholder="M1" value="00"><h3>&nbsp &nbsp M1</h3><br/>
+						<input type="text" name="M2" id='M2' class="input3" placeholder="M2" value="00"><h3>&nbsp &nbsp M2</h3><br/>
+						<input type="text" name="M3" id='M3' class="input3" placeholder="M3" value="00"><h3>&nbsp &nbsp M3</h3><br/>
+						<input type="text" name="M4" id='M3' class="input3" placeholder="M4" value="00"><h3>&nbsp &nbsp M4</h3><br/>
+						<input type="text" name="M5" id='M5' class="input3" placeholder="M5" value="00"><h3>&nbsp &nbsp M5</h3><br/>
+						<input type="text" name="M6" id='M6' class="input3" placeholder="M6" value="00"><h3>&nbsp &nbsp M6</h3><br/>
+						<input type="text" name="M7" id='M7' class="input3" placeholder="M7" value="00"><h3>&nbsp &nbsp M7</h3><br/>
+						<input type="text" name="M8" id='M8' class="input3" placeholder="M8" value="00"><h3>&nbsp &nbsp M8</h3><br/>
+						<input type="text" name="M9" id='M9' class="input3" placeholder="M9" value="00"><h3>&nbsp &nbsp M9</h3><br/>
+						</form>
+					</div>
+					<div class="row">
+						<button id="btn-sendData" type="button" class="calcButton btn btn-primary" value="Do Calculations">Write RT Data</button>
+					</div>
+				</div>
+		</div>
+        <!--Footer-->
+        <!-- <footer class="container"> -->
+        <div class="text-center navbar navbar-fixed-bottom" id='footer'>
+            <div class="container-fluid">
+                <br/>
+                <span id='copyright'>© 2020 Copyright by Rich Budek all rights reserved</span>
+            </div>
+        </div>
+        <!-- </footer> -->
+
+		<!-- Modal about about -->
+		<div id="modal-about" class="modal">
+			<div class="modal-content">
+				<h3>WCO Production Monitoring</h3>
+				<div class="divider"></div>
+				<h4>
+					<br/>This screen displays the production machinery real time from anywhere
+					in the world.  The purpose is that during social distancing guidelines the 
+					production workers on monitored equipment can step away and still keep the 
+					production lines running.
+					<br/>
+					<br/>
+					<br/>Software developed by Rich Budek by reusing code from other projects 
+					for other users. 
+					<br/>
+					<br/>
+				</h4>
+				<div style="padding: 20px 0px 10px 0px;"  class="divider">
+					<button id="close-about" type="button" class="btn btn-primary closeButton" data-dismiss="modal">Close</button>
+					<button id="btn-exit" type="button" class="btn btn-primary exitButton" data-dismiss="modal">&nbspExit&nbsp</button>
+					<br/><br/>
+				</div>
+				
+				</div>
+			</div>
+		</div>
+
+
+		<script>
+
+		var closeModals = function() {
+			var modAbout = $("#modal-about");
+			$(modAbout).css("display", "none");		
+			var modHelp1 = $("#modal-help1");
+			$(modHelp1).css("display", "none");		
+			var modHelp2 = $("#modal-help2");
+			$(modHelp2).css("display", "none");		
+			var modHelp3 = $("#modal-help3");
+			$(modHelp3).css("display", "none");	
+			//used to reload the page, don't want right now
+			//because it clears all of the entries	
+			//window.location.reload(false);
+		};
+
+  	    $(document).ready(function () {
+		  //document is ready, so move the incoming data over
+          //closeModals();
+			console.log("document is ready");
+
+    	  //$(document.body).on("click", "#close-about", closeModals() );
+		  $('#close-about').on('click', function(event) {
+			  event.preventDefault();
+			  closeModals();
+		  });
+
+		  $('#btn-about').on('click', function (event) {
+			  event.preventDefault();
+			  var modAbout = $("#modal-about");
+			  $(modAbout).css("display", "block");
+		  });
+
+
+		  $('#btn-exit').on('click', function (event) {
+			  event.preventDefault();
+			  window.location.href = "http://www.msn.com";
+		  });
+
+
+		  //close the help modals by using a class
+		  $('.close-help').on('click', function(event) {
+			  event.preventDefault();
+			  closeModals();
+		  });
+
+		  $('.exit-help').on('click', function (event) {
+			  event.preventDefault();
+			  closeModals();
+			  window.location.href = "http://www.msn.com";
+		  });
+
+
+		  $('#btn-sendData').on('click', function (event) {
+    		//$(document.body).on("submit", "#login-form", function (event) {
+        		event.preventDefault();
+				console.log("hit the button");
+        		var url = $(this).attr("action");
+
+				var _rollDiam = $('#rollDiam').val();
+				var _cavityDiam = $('#cavityDiam').val();
+				var _cavityDepth = $('#cavityDepth').val();
+				//do as a form submit instead of a post
+				//this allows the return of a render
+				$('#monitor-form').submit();
+				window.location.href = "/monitor_main";
+    		});  //end of click
+  	    });
+
+		</script>
+	</body>
+
+</html>
