@@ -346,7 +346,7 @@ router.get('/monitor_main', function(req, res, next) {
     if (userLoggedIn == true) {
         //logged in so just write to user db
 
-        var userLogRec = new userLogRecStoreType(
+        let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
             req.session.loginName,
@@ -355,7 +355,7 @@ router.get('/monitor_main', function(req, res, next) {
             'monitor main menu'
         );
 
-        var query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
+        let query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,

@@ -62,12 +62,14 @@ router.post('/update-rt-data', function(req, res, next) {
         let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
-            actionDone,
-            actionString
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
+            actionDone
         );
 
 
-        var query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
+        let query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,
