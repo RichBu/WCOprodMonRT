@@ -70,9 +70,12 @@
 						<input type="text" name="M8" id='M8' class="input3" placeholder="M8" value="00"><h3>&nbsp &nbsp M8</h3><br/>
 						<input type="text" name="M9" id='M9' class="input3" placeholder="M9" value="00"><h3>&nbsp &nbsp M9</h3><br/>
 						<br/>
-						<button id="btn-sendData" type="submit" class="calcButton btn btn-primary" value="Do Calculations">Write RT Data</button>
+						<button id="btn-sendData" type="submit" class="calcButton btn btn-primary" value="Write RT Data">Write RT Data</button>
 						</form>
-					</div>
+						<br/>
+						<br/>
+						<button id="btn-readData" class="calcButton btn btn-primary" value="Read RT Data">Read RT Data</button>	
+					</div>				
 					<div class="row">
 					</div>
 				</div>
@@ -168,6 +171,20 @@
 		  });
 
 
+		  $('#btn-readData').on('click', function (event) {
+			  event.preventDefault();
+			  console.log("clicked read button");
+			  var data = "";
+			  var url = "/api/read-rt-data";
+			  $.post(url, data, function(data) {
+				console.log("got read result");
+				//console.log(data);
+				for (var i=0; i<data.length; i++) {
+					console.log(data[i].mach_num + " = " + data[i].mach_stat_code);
+				};
+			  });
+		  });
+
 /*  button is on the form now, so don't need as separate
 		  $('#btn-sendData').on('click', function (event) {
 */			  
@@ -175,11 +192,12 @@
 			$('#monitor-form').submit(function(event){	
         		event.preventDefault();
 
-				console.log("hit the button");
+				console.log("hit the write button");
 				var data = $(this).serialize();
 				var url = $(this).attr("action");
 				$.post(url, data, function(data) {
 					console.log("got result");
+					console.log(data);
 				});
 
 				//do as a form submit instead of a post

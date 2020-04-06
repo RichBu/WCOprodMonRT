@@ -141,13 +141,113 @@ router.post('/update-rt-data', function(req, res, next) {
                     continF = 1;
                 });
 
-                //while (continF == 0) {
-                //    var A = 0;
-                //    var B = A + 1;
-                //hangup until continF=1
-                //};
             }; //for loop
             res.status(201).send(); //201 means record has been created
+        }); //query to write to user log	
+    } else {
+        var actionDone = 'api-post RT data';
+        var actionString = 'tried to add but timed out';
+
+        let userLogRec = new userLogRecStoreType(
+            moment().format("YYYY-MM-DD  HH:mm a"),
+            req.session.clientIP,
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
+            req.session.actionDone
+        );
+
+        let query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
+        connection.query(query, [
+            userLogRec.timeStr,
+            userLogRec.clientIP,
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
+        ], function(err, response) {
+            res.render('index');
+        });
+    };
+});
+
+
+
+//post route to retrieve RT data
+router.post('/read-rt-data', function(req, res, next) {
+    const numMach = 9;
+
+    var M1 = "";
+    var M2 = "";
+    var M3 = "";
+    var M4 = "";
+    var M5 = "";
+    var M6 = "";
+    var M7 = "";
+    var M8 = "";
+    var M9 = "";
+
+    var loginValid = 'false';
+    var outputUrl = '/';
+
+    console.log('at read-rt-data post route');
+
+    var dataOutput = [];
+
+    //check if logged in, later feature
+    //for now, bypass
+    let noLogin = true;
+    if (req.session.logged_in != true) {
+        req.session.loginName = " ";
+        req.session.password = " ";
+        req.session.fullName = " ";
+    };
+    if (noLogin || req.session.logged_in === true) {
+        var actionDone = 'api-post RT read';
+        var actionString = 'update RT data';
+
+        let userLogRec = new userLogRecStoreType(
+            moment().format("YYYY-MM-DD  HH:mm a"),
+            req.session.clientIP,
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
+            actionDone
+        );
+
+
+        var query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
+        connection.query(query, [
+            userLogRec.timeStr,
+            userLogRec.clientIP,
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
+        ], function(err, response) {
+            //log has been written, now write to the log file table
+            console.log("before SELECT query");
+
+            function outputObj(_mach_num, _mach_stat_code) {
+                this.mach_num = _mach_num,
+                    this.mach_stat_code = _mach_stat_code
+            };
+            var query2 = "SELECT * FROM mach_rt";
+            connection.query(query2, [], function(err, response) {
+                //console.log(response);
+                for (var i = 0; i < response.length; i++) {
+                    //loop thru all of the responses
+                    dataOutput.push(new outputObj(
+                        response[i].mach_num,
+                        response[i].mach_stat_code
+                    ));
+                    console.log(response[i].mach_num + " = " + response[i].mach_stat_code);
+                };
+                console.log(dataOutput);
+                //res.data = dataOutput;
+                res.status(201).send(dataOutput); //201 means record has been created
+            });
+
         }); //query to write to user log	
     } else {
         var actionDone = 'api-post RT data';
