@@ -27,8 +27,10 @@ CREATE TABLE user_log (
     user_log_id INT NOT NULL AUTO_INCREMENT,
     time_str VARCHAR(19),
     ip_addr VARCHAR(16),
+    loginName VARCHAR(20),
+    password VARCHAR(20),
+    fullName VARCHAR(20),
     action_done VARCHAR(20),
-    action_string VARCHAR(80),
     PRIMARY KEY (user_log_id)
 );
 

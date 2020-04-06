@@ -92,7 +92,7 @@ router.get('/', function(req, res, next) {
             userLogRec.action_done
         ], function(err, response) {
             //what to do after the log has been written
-            console.log('wrote to ip local');
+            console.log('wrote to ip addr');
             //res.sendStatus(200).end();  
             res.render('index', {
                 base_url: process.env.BASE_URL
@@ -331,16 +331,22 @@ router.get('/monitor_main', function(req, res, next) {
     let _action_done;
     let ip;
     let clientIP;
-    let userLoggedIn;
+    let userLoggedIn = true;
 
 
     //normally would check if logged in, but now just do it all the time
-    userLoggedIn = true;
-    if (req.session.logged_in == true) userLoggedIn = true;
-    if (userLoggedIn === true) {
+    //userLoggedIn = true;
+    if (req.session.logged_in == true) {
+        userLoggedIn = true;
+    } else {
+        req.session.loginName = " ";
+        req.session.password = " ";
+        req.session.fullName = " ";
+    };
+    if (userLoggedIn == true) {
         //logged in so just write to user db
 
-        let userLogRec = new userLogRecStoreType(
+        var userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
             req.session.loginName,
@@ -359,7 +365,7 @@ router.get('/monitor_main', function(req, res, next) {
             userLogRec.action_done
         ], function(err, response) {
             //what to do after the log has been written
-            console.log('wrote to ip log');
+            console.log('wrote to ip log-logged in');
             //res.sendStatus(200).end();  
             res.render('monitor_write', {
                 base_url: process.env.BASE_URL
@@ -409,7 +415,7 @@ router.get('/monitor_main', function(req, res, next) {
                 console.log('wrote to ip local');
 
                 //res.sendStatus(200).end();  
-                res.render('index', {
+                res.render('monitor_write', {
                     base_url: process.env.BASE_URL
                 });
             });

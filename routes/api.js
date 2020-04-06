@@ -56,8 +56,8 @@ router.post('/update-rt-data', function(req, res, next) {
     //for now, bypass
     let noLogin = true;
     if (noLogin || req.session.logged_in === true) {
-        var actionDone = 'api-post log file';
-        var actionString = 'add a log file name to db';
+        var actionDone = 'api-post RT update';
+        var actionString = 'update RT data';
 
         let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
@@ -137,8 +137,6 @@ router.post('/update-rt-data', function(req, res, next) {
                 //};
             }; //for loop
             res.status(201).send(); //201 means record has been created
-
-
         }); //query to write to user log	
     } else {
         var actionDone = 'api-post RT data';
