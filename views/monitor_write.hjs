@@ -69,10 +69,11 @@
 						<input type="text" name="M7" id='M7' class="input3" placeholder="M7" value="00"><h3>&nbsp &nbsp M7</h3><br/>
 						<input type="text" name="M8" id='M8' class="input3" placeholder="M8" value="00"><h3>&nbsp &nbsp M8</h3><br/>
 						<input type="text" name="M9" id='M9' class="input3" placeholder="M9" value="00"><h3>&nbsp &nbsp M9</h3><br/>
+						<br/>
+						<button id="btn-sendData" type="submit" class="calcButton btn btn-primary" value="Do Calculations">Write RT Data</button>
 						</form>
 					</div>
 					<div class="row">
-						<button id="btn-sendData" type="button" class="calcButton btn btn-primary" value="Do Calculations">Write RT Data</button>
 					</div>
 				</div>
 		</div>
@@ -167,20 +168,27 @@
 		  });
 
 
+/*  button is on the form now, so don't need as separate
 		  $('#btn-sendData').on('click', function (event) {
-    		//$(document.body).on("submit", "#login-form", function (event) {
+*/			  
+    		//$(document.body).on("submit", "#monitor-form", function (event) {
+			$('#monitor-form').submit(function(event){	
         		event.preventDefault();
-				console.log("hit the button");
-        		var url = $(this).attr("action");
 
-				var _rollDiam = $('#rollDiam').val();
-				var _cavityDiam = $('#cavityDiam').val();
-				var _cavityDepth = $('#cavityDepth').val();
+				console.log("hit the button");
+				var data = $(this).serialize();
+				var url = $(this).attr("action");
+				$.post(url, data, function(data) {
+					console.log("got result");
+				});
+
 				//do as a form submit instead of a post
 				//this allows the return of a render
-				$('#monitor-form').submit();
-				window.location.href = "/monitor_main";
-    		});  //end of click
+				//$('#monitor-form').submit();
+				//don't have to do anything because if post worked, it continues
+				//window.history.back();  //go back to prev page
+				//window.location.href = "/monitor_main";
+    		});  //end of click			
   	    });
 
 		</script>
