@@ -23,11 +23,13 @@ const math = require('mathjs');
 
 //put in a separate class
 class userLogRecStoreType {
-    constructor(_timeStr, _clientIP, _action_done, _action_string) {
+    constructor(_timeStr, _clientIP, _loginName, _password, _fullName, _action_done) {
         this.timeStr = _timeStr;
         this.clientIP = _clientIP;
-        this.action_done = _action_done;
-        this.action_string = _action_string;
+        this.loginName = _loginName;
+        this.password = _password;
+        this.fullName = _fullName;
+        this.action_done = _action_done
     }
 };
 
@@ -55,6 +57,11 @@ router.post('/update-rt-data', function(req, res, next) {
     //check if logged in, later feature
     //for now, bypass
     let noLogin = true;
+    if (req.session.logged_in != true) {
+        req.session.loginName = " ";
+        req.session.password = " ";
+        req.session.fullName = " ";
+    };
     if (noLogin || req.session.logged_in === true) {
         var actionDone = 'api-post RT update';
         var actionString = 'update RT data';
@@ -69,12 +76,14 @@ router.post('/update-rt-data', function(req, res, next) {
         );
 
 
-        let query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
+        var query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,
-            userLogRec.action_done,
-            userLogRec.action_string
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
         ], function(err, response) {
             //log has been written, now write to the log file table
 
@@ -147,16 +156,20 @@ router.post('/update-rt-data', function(req, res, next) {
         let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
-            actionDone,
-            actionString
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
+            req.session.actionDone
         );
 
-        var query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
+        let query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,
-            userLogRec.action_done,
-            userLogRec.action_string
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
         ], function(err, response) {
             res.render('index');
         });
@@ -184,17 +197,21 @@ router.post('/logfile', function(req, res, next) {
         let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
-            actionDone,
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
             actionString
         );
 
 
-        var query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
+        let query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,
-            userLogRec.action_done,
-            userLogRec.action_string
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
         ], function(err, response) {
             //log has been written, now write to the log file table
 
@@ -222,16 +239,20 @@ router.post('/logfile', function(req, res, next) {
         let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
-            actionDone,
-            actionString
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
+            actionDone
         );
 
-        var query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
+        let query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,
-            userLogRec.action_done,
-            userLogRec.action_string
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
         ], function(err, response) {
             res.render('index');
         });
@@ -307,16 +328,20 @@ router.post('/eventbytime', function(req, res, next) {
         let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
-            actionDone,
-            actionString
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
+            actionDone
         );
 
-        var query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
+        let query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,
-            userLogRec.action_done,
-            userLogRec.action_string
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
         ], function(err, response) {
             //log has been written, now write to the log file table	  
             var query = "INSERT INTO event_bytime (start_time_str, end_time_str, event_duration, on_time_utc, off_time_utc, dur_time_utc, m1, m2, m3, m4, m5, m6, m7, m8, m9) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -343,22 +368,26 @@ router.post('/eventbytime', function(req, res, next) {
             }); //query to write to event by time 
         }); //query to write to user log	
     } else {
-        var actionDone = 'api-post event by time';
+        var actionDone = 'api-post evt-timed out';
         var actionString = 'tried to add but timed out';
 
         let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
-            actionDone,
-            actionString
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
+            actionDone
         );
 
-        var query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
+        let query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,
-            userLogRec.action_done,
-            userLogRec.action_string
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
         ], function(err, response) {
             res.render('index');
         });
@@ -428,16 +457,20 @@ router.post('/eventbymach', function(req, res, next) {
         let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
-            actionDone,
-            actionString
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
+            actionDone
         );
 
-        var query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
+        let query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,
-            userLogRec.action_done,
-            userLogRec.action_string
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
         ], function(err, response) {
             //log has been written, now write to the log file table	  
             var query = "INSERT INTO event_bymach (mach_num_str, mach_num, event_str, start_time_str, end_time_str, start_time_utc, end_time_utc,  event_duration_utc, on_time_utc, off_time_utc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -467,22 +500,26 @@ router.post('/eventbymach', function(req, res, next) {
             }); //query to write to event by time 
         }); //query to write to user log	
     } else {
-        var actionDone = 'api-post event by machine';
+        var actionDone = 'api-post EVM-timed out';
         var actionString = 'tried to add but timed out';
 
         let userLogRec = new userLogRecStoreType(
             moment().format("YYYY-MM-DD  HH:mm a"),
             req.session.clientIP,
-            actionDone,
-            actionString
+            req.session.loginName,
+            req.session.password,
+            req.session.fullName,
+            actionDone
         );
 
-        var query = "INSERT INTO user_log (time_str, ip_addr, action_done, action_string) VALUES (?, ?, ?, ? )";
+        var query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
             userLogRec.clientIP,
-            userLogRec.action_done,
-            userLogRec.action_string
+            userLogRec.loginName,
+            userLogRec.password,
+            userLogRec.fullName,
+            userLogRec.action_done
         ], function(err, response) {
             res.render('index');
         });
