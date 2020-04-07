@@ -55,30 +55,42 @@
 		<div class="backgroundIndexStyle">
 		</div>
 		<div style="padding: 40px 0px 40px 0px;">
-  				<div class="col-lg-2 col-md-2 col-sm-2 col-xs-1 transDivStyle">
+  			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-1 transDivStyle">
+			</div>
+			<div class="col-lg-6 col-md-6 col-sm-8 col-xs-10 inputDivStyle">
+				<div class="row">
+					<form id="monitor-form" role="form" action="/api/update-rt-data" method="post">
+					<input type="text" name="M1" id='M1' class="input3" placeholder="M1" value="00"><h3>&nbsp &nbsp M1</h3><br/>
+					<input type="text" name="M2" id='M2' class="input3" placeholder="M2" value="00"><h3>&nbsp &nbsp M2</h3><br/>
+					<input type="text" name="M3" id='M3' class="input3" placeholder="M3" value="00"><h3>&nbsp &nbsp M3</h3><br/>
+					<input type="text" name="M4" id='M3' class="input3" placeholder="M4" value="00"><h3>&nbsp &nbsp M4</h3><br/>
+					<input type="text" name="M5" id='M5' class="input3" placeholder="M5" value="00"><h3>&nbsp &nbsp M5</h3><br/>
+					<input type="text" name="M6" id='M6' class="input3" placeholder="M6" value="00"><h3>&nbsp &nbsp M6</h3><br/>
+					<input type="text" name="M7" id='M7' class="input3" placeholder="M7" value="00"><h3>&nbsp &nbsp M7</h3><br/>
+					<input type="text" name="M8" id='M8' class="input3" placeholder="M8" value="00"><h3>&nbsp &nbsp M8</h3><br/>
+					<input type="text" name="M9" id='M9' class="input3" placeholder="M9" value="00"><h3>&nbsp &nbsp M9</h3><br/>
+					<br/>
+					<button id="btn-sendData" type="submit" class="calcButton btn btn-primary" value="Write RT Data">Write RT Data</button>
+					</form>
+					<br/>
+					<br/>
+					<button id="btn-readData" class="calcButton btn btn-primary" value="Read RT Data">Read RT Data</button>	
+				</div>				
+				<div class="row">
 				</div>
-				<div class="col-lg-6 col-md-6 col-sm-8 col-xs-10 inputDivStyle">
-					<div class="row">
-						<form id="monitor-form" role="form" action="/api/update-rt-data" method="post">
-						<input type="text" name="M1" id='M1' class="input3" placeholder="M1" value="00"><h3>&nbsp &nbsp M1</h3><br/>
-						<input type="text" name="M2" id='M2' class="input3" placeholder="M2" value="00"><h3>&nbsp &nbsp M2</h3><br/>
-						<input type="text" name="M3" id='M3' class="input3" placeholder="M3" value="00"><h3>&nbsp &nbsp M3</h3><br/>
-						<input type="text" name="M4" id='M3' class="input3" placeholder="M4" value="00"><h3>&nbsp &nbsp M4</h3><br/>
-						<input type="text" name="M5" id='M5' class="input3" placeholder="M5" value="00"><h3>&nbsp &nbsp M5</h3><br/>
-						<input type="text" name="M6" id='M6' class="input3" placeholder="M6" value="00"><h3>&nbsp &nbsp M6</h3><br/>
-						<input type="text" name="M7" id='M7' class="input3" placeholder="M7" value="00"><h3>&nbsp &nbsp M7</h3><br/>
-						<input type="text" name="M8" id='M8' class="input3" placeholder="M8" value="00"><h3>&nbsp &nbsp M8</h3><br/>
-						<input type="text" name="M9" id='M9' class="input3" placeholder="M9" value="00"><h3>&nbsp &nbsp M9</h3><br/>
-						<br/>
-						<button id="btn-sendData" type="submit" class="calcButton btn btn-primary" value="Write RT Data">Write RT Data</button>
-						</form>
-						<br/>
-						<br/>
-						<button id="btn-readData" class="calcButton btn btn-primary" value="Read RT Data">Read RT Data</button>	
-					</div>				
-					<div class="row">
-					</div>
-				</div>
+				<!-- Status Output -->
+				<div class="row">
+					<div id="M01" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp01</h3></div>
+					<div id="M02" class="statusOn"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp02</h3></div>
+					<div id="M03" class="statusOn"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp03</h3></div>
+					<div id="M04" class="statusRun"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp04</h3></div>
+					<div id="M05" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp05</h3></div>
+					<div id="M06" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp06</h3></div>
+					<div id="M07" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp07</h3></div>
+					<div id="M08" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp08</h3></div>
+					<div id="M09" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp09</h3></div>
+				</div>	
+			</div>
 		</div>
         <!--Footer-->
         <!-- <footer class="container"> -->
@@ -134,6 +146,38 @@
 			//window.location.reload(false);
 		};
 
+
+		var readData = function() {
+			  var data = "";
+			  var url = "/api/read-rt-data";
+			  $.post(url, data, function(data) {
+				console.log("got read result");
+				//console.log(data);
+				for (var i=0; i<data.length; i++) {
+					console.log(data[i].mach_num + " = " + data[i].mach_stat_code);
+					var idStr = "#M" + data[i].mach_num.trim();
+					$(idStr).removeClass();
+					var statusStr = "";
+					switch (data[i].mach_stat_code) {
+						case "00":
+						  statusStr = "statusOff"; 
+						  break;
+						case "01":
+						  statusStr = "statusOn";
+						  break;
+						case "03":
+						  statusStr = "statusRun";
+						  break;
+						case "09":
+						  statusStr = "statusHold";
+						  break;    
+					};
+					$(idStr).addClass(statusStr);
+				};
+			  });
+		};
+
+
   	    $(document).ready(function () {
 		  //document is ready, so move the incoming data over
           //closeModals();
@@ -174,15 +218,8 @@
 		  $('#btn-readData').on('click', function (event) {
 			  event.preventDefault();
 			  console.log("clicked read button");
-			  var data = "";
-			  var url = "/api/read-rt-data";
-			  $.post(url, data, function(data) {
-				console.log("got read result");
-				//console.log(data);
-				for (var i=0; i<data.length; i++) {
-					console.log(data[i].mach_num + " = " + data[i].mach_stat_code);
-				};
-			  });
+			  setInterval(readData,2000);
+			  //readData();
 		  });
 
 /*  button is on the form now, so don't need as separate
