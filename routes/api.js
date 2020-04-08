@@ -76,6 +76,7 @@ router.post('/update-rt-data', function(req, res, next) {
         );
 
 
+        /*
         var query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
@@ -85,65 +86,66 @@ router.post('/update-rt-data', function(req, res, next) {
             userLogRec.fullName,
             userLogRec.action_done
         ], function(err, response) {
-            //log has been written, now write to the log file table
+        */
+        //log has been written, now write to the log file table
 
-            for (var machLp = 0; machLp < (numMach); machLp++) {
-                //loop thru all of the machines
-                var outMachNum = "";
-                var outMachCode = "";
-                switch (machLp) {
-                    case 0:
-                        outMachNum = "01";
-                        outMachCode = M1;
-                        break;
-                    case 1:
-                        outMachNum = "02";
-                        outMachCode = M2;
-                        break;
-                    case 2:
-                        outMachNum = "03";
-                        outMachCode = M3;
-                        break;
-                    case 3:
-                        outMachNum = "04";
-                        outMachCode = M4;
-                        break;
-                    case 4:
-                        outMachNum = "05";
-                        outMachCode = M5;
-                        break;
-                    case 5:
-                        outMachNum = "06";
-                        outMachCode = M6;
-                        break;
-                    case 6:
-                        outMachNum = "07";
-                        outMachCode = M7;
-                        break;
-                    case 7:
-                        outMachNum = "08";
-                        outMachCode = M8;
-                        break;
-                    case 8:
-                        outMachNum = "09";
-                        outMachCode = M9;
-                        break;
-                }; //switch statement
+        for (var machLp = 0; machLp < (numMach); machLp++) {
+            //loop thru all of the machines
+            var outMachNum = "";
+            var outMachCode = "";
+            switch (machLp) {
+                case 0:
+                    outMachNum = "01";
+                    outMachCode = M1;
+                    break;
+                case 1:
+                    outMachNum = "02";
+                    outMachCode = M2;
+                    break;
+                case 2:
+                    outMachNum = "03";
+                    outMachCode = M3;
+                    break;
+                case 3:
+                    outMachNum = "04";
+                    outMachCode = M4;
+                    break;
+                case 4:
+                    outMachNum = "05";
+                    outMachCode = M5;
+                    break;
+                case 5:
+                    outMachNum = "06";
+                    outMachCode = M6;
+                    break;
+                case 6:
+                    outMachNum = "07";
+                    outMachCode = M7;
+                    break;
+                case 7:
+                    outMachNum = "08";
+                    outMachCode = M8;
+                    break;
+                case 8:
+                    outMachNum = "09";
+                    outMachCode = M9;
+                    break;
+            }; //switch statement
 
-                //now need to make the query be synchronous instead of async
-                var continF = 0
-                var query2 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
-                connection.query(query2, [
-                    outMachCode,
-                    outMachNum
-                ], function(err2, response2) {
-                    //should check if there is an error
-                    continF = 1;
-                });
+            //now need to make the query be synchronous instead of async
+            var continF = 0
+            var query2 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
+            connection.query(query2, [
+                outMachCode,
+                outMachNum
+            ], function(err2, response2) {
+                //should check if there is an error
+                continF = 1;
+            });
 
-            }; //for loop
-            res.status(201).send(); //201 means record has been created
-        }); //query to write to user log	
+        }; //for loop
+        res.status(201).send(); //201 means record has been created
+        //}); //query to write to user log	
     } else {
         var actionDone = 'api-post RT data';
         var actionString = 'tried to add but timed out';
