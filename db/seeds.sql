@@ -2,6 +2,13 @@
 
 USE oc9ymp1ljwq5wln2;
 
+
+INSERT INTO mach_rt (
+    mach_num, mach_stat_code
+) VALUES (
+    "00", "00"
+);
+
 INSERT INTO mach_rt (
     mach_num, mach_stat_code
 ) VALUES (

@@ -259,7 +259,7 @@ input {
     margin: 0px;
     padding: 0px 0px 0px 10%;
     z-index: 5;
-    background-image: url('/images/Ovals_back_01.jpg') repeat center;
+    background-image: url("/images/IIoT_back_02.jpg") repeat center;
     /*background: url('images/CNC_01_full_back.jpg');*/
     /* background: rgba(255,255,255,0.9);  */
 }
@@ -301,7 +301,7 @@ input {
 }
 
 .backgroundIndexStyle {
-    background: url("/images/Ovals_back_01.jpg") repeat center;
+    background: url("/images/IIoT_back_02.jpg") repeat center;
     position: absolute;
     top: 0px;
     left: 0px;
@@ -324,7 +324,7 @@ input {
 
 .blankImage>figure {
     backface-visibility: hidden;
-    background-image: url('/images/Oval_01.png') repeat;
+    background-image: url("/images/IIoT_back_02.jpg") repeat center;
     /* background-size: cover; */
     /* background-position: center center; */
     color: transparent;

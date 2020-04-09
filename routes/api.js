@@ -179,6 +179,7 @@ router.post('/update-rt-data', function(req, res, next) {
 router.post('/read-rt-data', function(req, res, next) {
     const numMach = 9;
 
+    var M0 = "";
     var M1 = "";
     var M2 = "";
     var M3 = "";
@@ -228,7 +229,6 @@ router.post('/read-rt-data', function(req, res, next) {
             userLogRec.action_done
         ], function(err, response) {
             //log has been written, now write to the log file table
-            console.log("before SELECT query");
 
             function outputObj(_mach_num, _mach_stat_code) {
                 this.mach_num = _mach_num,
@@ -236,17 +236,13 @@ router.post('/read-rt-data', function(req, res, next) {
             };
             var query2 = "SELECT * FROM mach_rt";
             connection.query(query2, [], function(err, response) {
-                //console.log(response);
                 for (var i = 0; i < response.length; i++) {
                     //loop thru all of the responses
                     dataOutput.push(new outputObj(
                         response[i].mach_num,
                         response[i].mach_stat_code
                     ));
-                    console.log(response[i].mach_num + " = " + response[i].mach_stat_code);
                 };
-                console.log(dataOutput);
-                //res.data = dataOutput;
                 res.status(201).send(dataOutput); //201 means record has been created
             });
 

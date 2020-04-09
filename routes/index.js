@@ -367,7 +367,7 @@ router.get('/monitor_main', function(req, res, next) {
             //what to do after the log has been written
             console.log('wrote to ip log-logged in');
             //res.sendStatus(200).end();  
-            res.render('monitor_write', {
+            res.render('monitor_read', {
                 base_url: process.env.BASE_URL
             });
         });
@@ -415,7 +415,7 @@ router.get('/monitor_main', function(req, res, next) {
                 console.log('wrote to ip local');
 
                 //res.sendStatus(200).end();  
-                res.render('monitor_write', {
+                res.render('monitor_read', {
                     base_url: process.env.BASE_URL
                 });
             });
