@@ -98,10 +98,16 @@
 				<h3>WCO Production Monitoring</h3>
 				<div class="divider"></div>
 				<h4>
-					<br/>This screen displays the production machinery real time from anywhere
-					in the world.  The purpose is that during social distancing guidelines the 
-					production workers on monitored equipment can step away and still keep the 
-					production lines running.
+					<br/>This page keeps polling the backend every 10 seconds once you 
+					press the Start Reading button.  It will keep reading until you 
+					press the Stop Reading button.  To conserve battery power and data 
+					usage, press the Stop Reading button
+					<br/>
+					<br/>
+					<br/>Legend:
+					<br/>&nbsp;&nbsp;white = off line (no connection)
+					<br/>&nbsp;&nbsp;red = stopped 
+					<br/>&nbsp;&nbsp;green = running and feeding
 					<br/>
 					<br/>
 					<br/>Software developed by Rich Budek by reusing code from other projects 
