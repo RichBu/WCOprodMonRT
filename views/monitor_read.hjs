@@ -38,16 +38,14 @@
         <header class="container text-center">
             <div class="row" style="padding: 20px 0px 0px 0px;" >
 				<!--Site Logo-->
-                <div class="col-xs-4">
-                    <!-- 
-						<a href='/'><img src="/images/genielogo.png" alt='TableTop Genie Logo' id='pageLogo' class='img img-thumbnail'></a>
-					-->	
+                <div class="col-sm-1 ol-xs-2">
+  			      	<button id="btn-back" type="button" class="btn btn-primary leftButton" >&nbsp;&nbsp;&nbsp;&#60;&nbsp;&nbsp;&nbsp;</button>
                 </div>
-                <div class="col-xs-4">
+                <div class="col-sm-10 col-xs-8">
                     <h1>Read RT data</h1>
                 </div>
-                <div class="col-xs-4">
-  			      <button id="btn-about" type="button" class="btn btn-primary aboutButton" >About</button>
+                <div class="col-sm-1 col-xs-2">
+  			      <button id="btn-about" type="button" class="btn btn-primary aboutButton" >Help</button>
                 </div>
             </div>
 			<hr/>
@@ -55,9 +53,9 @@
 		<div class="backgroundIndexStyle">
 		</div>
 		<div style="padding: 40px 0px 40px 0px;">
-  			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-1 transDivStyle">
+  			<div class="col-lg-1 col-md-2 col-sm-2 col-xs-1 transDivStyle">
 			</div>
-			<div class="col-lg-6 col-md-6 col-sm-8 col-xs-10 inputDivStyle">
+			<div class="col-lg-10 col-md-8 col-sm-8 col-xs-10 inputDivStyle">
 				<div class="row">
 					<button id="btn-startRead" class="calcButton btn btn-primary" >Start Reading</button>	
 					<br/>
@@ -80,6 +78,8 @@
 					<div id="M08" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp08</h3></div>
 					<div id="M09" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp09</h3></div>
 				</div>	
+			</div>
+  			<div class="col-lg-1 col-md-2 col-sm-2 col-xs-1 transDivStyle">
 			</div>
 		</div>
         <!--Footer-->
@@ -176,6 +176,11 @@
 		  $('#close-about').on('click', function(event) {
 			  event.preventDefault();
 			  closeModals();
+		  });
+
+		  $('#btn-back').on('click', function (event) {
+			  event.preventDefault();
+			  window.history.back();
 		  });
 
 		  $('#btn-about').on('click', function (event) {
