@@ -41,8 +41,8 @@
                 <div class="col-sm-1 ol-xs-2">
   			      	<button id="btn-back" type="button" class="btn btn-primary leftButton" >&nbsp;&nbsp;&nbsp;&#60;&nbsp;&nbsp;&nbsp;</button>
                 </div>
-                <div class="col-sm-10 col-xs-8">
-                    <h1>Read RT data</h1>
+                <div class="col-sm-10 col-xs-7">
+                    <h2>Read RT data</h2>
                 </div>
                 <div class="col-sm-1 col-xs-2">
   			      <button id="btn-about" type="button" class="btn btn-primary aboutButton" >Help</button>
