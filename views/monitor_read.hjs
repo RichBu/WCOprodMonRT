@@ -61,7 +61,7 @@
 				<div class="row">
 					<button id="btn-startRead" class="calcButton btn btn-primary" >Start Reading</button>	
 					<br/>
-					<button id="btn-pauseRead" class="calcButton btn btn-primary" >Pause Reading</button>	
+					<button id="btn-stopRead" class="calcButton btn btn-primary" >Stop Reading</button>	
 					<br/>
 					<br/>
 					<br/><h3>&nbsp</h3>
@@ -211,7 +211,7 @@
 		  });
 
 
-		  $('#btn-pauseRead').on('click', function (event) {
+		  $('#btn-stopRead').on('click', function (event) {
 			  event.preventDefault();
 			  console.log("clicked pause button");
 			  clearInterval(tmrHandle);
