@@ -134,7 +134,7 @@
 					was collected and used internally. The data is now sent to a Node JS backend.
 					<br/>
 					<br/>This app was created that takes the real time data and puts it in the 
-					cloud. Will soon add noticifation by text message when an event happens.
+					cloud. Will soon add notification by text message when an event happens.
 					<br/>
 					<br/>The update time is around 3 minutes to limit the burden on the local
 					network as well as the backend.

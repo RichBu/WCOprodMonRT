@@ -74,6 +74,6 @@ CREATE TABLE event_bymach (
 
 CREATE TABLE mach_rt (
     mach_num VARCHAR(2),
-    mach_stat_code VARCHAR(2),
+    mach_stat_code VARCHAR(20),
     PRIMARY KEY (mach_num)
 )

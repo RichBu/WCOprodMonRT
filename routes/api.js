@@ -18,6 +18,7 @@ const moment = require("moment");
 const momentDurationFormatSetup = require("moment-duration-format");
 const numeral = require("numeral");
 const math = require('mathjs');
+const sprintf = require('sprintf-js').sprintf;
 
 
 
@@ -48,6 +49,9 @@ router.post('/update-rt-data', function(req, res, next) {
     var M7 = req.body.M7;
     var M8 = req.body.M8;
     var M9 = req.body.M9;
+
+    let currDate = moment();
+    let currDateUnix = moment.unix(currDate);
 
     var loginValid = 'false';
     var outputUrl = '/';
@@ -88,6 +92,16 @@ router.post('/update-rt-data', function(req, res, next) {
         ], function(err, response) {
         */
         //log has been written, now write to the log file table
+
+        currDate = moment();
+        console.log("curr date =" + currDate);
+        currDateUnix = currDate.valueOf();
+        currDateUnix_int = parseInt(currDateUnix);
+        //currDateUnix = currDateUnix.valueOf;
+        console.log("unix=" + currDateUnix_int);
+        console.log("date to write to = " + moment(currDateUnix_int).format("YYYY-MM-DD HH:mm:ss"));
+        let currDateStr = currDate.format("YYYY-MM-DD HH:mm:ss");
+        console.log("curr date as a string = " + currDateStr);
 
         for (var machLp = 0; machLp < (numMach); machLp++) {
             //loop thru all of the machines
@@ -141,9 +155,29 @@ router.post('/update-rt-data', function(req, res, next) {
             ], function(err2, response2) {
                 //should check if there is an error
                 continF = 1;
+                /*
+                var query3 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
+                connection.query(query3, [
+                    "99",
+                    "0000" //currDateUnix
+                ], function(err3, response3) {
+                    //should check if there is an error
+                    continF = 1;
+                });
+                */
             });
-
         }; //for loop
+
+        //stored all the data now store the time done
+        var query3 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
+        connection.query(query3, [
+            currDateUnix_int,
+            "99"
+        ], function(err2, response2) {
+            //should check if there is an error
+            continF = 1;
+        });
+
         res.status(201).send(); //201 means record has been created
         //}); //query to write to user log	
     } else {
@@ -219,6 +253,7 @@ router.post('/read-rt-data', function(req, res, next) {
         );
 
 
+        /*
         var query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
         connection.query(query, [
             userLogRec.timeStr,
@@ -228,25 +263,66 @@ router.post('/read-rt-data', function(req, res, next) {
             userLogRec.fullName,
             userLogRec.action_done
         ], function(err, response) {
-            //log has been written, now write to the log file table
+        */
+        //log has been written, now write to the log file table
 
-            function outputObj(_mach_num, _mach_stat_code) {
-                this.mach_num = _mach_num,
-                    this.mach_stat_code = _mach_stat_code
-            };
-            var query2 = "SELECT * FROM mach_rt";
-            connection.query(query2, [], function(err, response) {
-                for (var i = 0; i < response.length; i++) {
-                    //loop thru all of the responses
+        function outputObj(_mach_num, _mach_stat_code) {
+            this.mach_num = _mach_num,
+                this.mach_stat_code = _mach_stat_code
+        };
+
+        let updateDate = moment();
+        let updateDate_int = 0;
+        let updateDateStr = "";
+        var query2 = "SELECT * FROM mach_rt";
+        connection.query(query2, [], function(err, response) {
+            for (var i = 0; i < response.length; i++) {
+                //loop thru all of the responses
+                if (response[i].mach_num == "99") {
+                    updateDate_int = parseInt(response[i].mach_stat_code);
+                    console.log("update int = " + updateDate_int);
+                    updateDate = moment(updateDate_int);
+                    updateDateStr = updateDate.format("HH:mm:ss MM/DD/YYYY");
+                    console.log("update date = " + updateDateStr);
+                    dataOutput.push(new outputObj(
+                        "99",
+                        updateDateStr
+                    ));
+                } else {
                     dataOutput.push(new outputObj(
                         response[i].mach_num,
                         response[i].mach_stat_code
                     ));
                 };
-                res.status(201).send(dataOutput); //201 means record has been created
-            });
+            };
 
-        }); //query to write to user log	
+            //calculate the time difference
+            let currDateUnix = moment().valueOf();
+            let updDate = moment(updateDate_int);
+            let curDate = moment(currDateUnix);
+            let diffTotSecs_mom = curDate.diff(updDate, 'seconds');
+            let diffTotSecs = diffTotSecs_mom.valueOf();
+            let tempCalc = diffTotSecs / 3600.0;
+            let diffHours = math.floor(tempCalc).valueOf();
+            let diffHoursStr = sprintf("0%i", diffHours);
+            tempCalc = (diffTotSecs - diffHours * 3600.0) / 60.0;
+            let diffMin = math.floor(tempCalc).valueOf();
+            tempCalc = (diffTotSecs - diffHours * 3600.0 - diffMin * 60.0);
+            let diffSec = math.floor(tempCalc).valueOf();
+            let diffStr = sprintf("%'02i", diffHours) + ":" + sprintf("%'02i", diffMin) + ":" + sprintf("%'02i", diffSec);
+
+            console.log("curr date = " + curDate.format("HH:mm:ss"));
+            console.log("upd date = " + updDate.format("HH:mm:ss"));
+            console.log("diff str = " + diffStr);
+            console.log(" ");
+            dataOutput.push(new outputObj(
+                "98",
+                diffStr
+            ));
+            res.status(201).send(dataOutput); //201 means record has been created
+        });
+
+        //}); //query to write to user log	
     } else {
         var actionDone = 'api-post RT data';
         var actionString = 'tried to add but timed out';

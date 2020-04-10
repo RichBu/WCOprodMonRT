@@ -66,3 +66,10 @@ INSERT INTO mach_rt (
 );
 
 
+INSERT INTO mach_rt (
+    mach_num, mach_stat_code
+) VALUES (
+    "99", "2020-04-01 03:00:00"
+);
+
+

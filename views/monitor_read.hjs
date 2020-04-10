@@ -78,6 +78,19 @@
 					<div id="M08" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp08</h3></div>
 					<div id="M09" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp09</h3></div>
 				</div>	
+				<div class="row">
+					<br/>
+					<br/>
+					<div id="lastUpdate"></div>
+				</div>	
+				<div class="row">
+					<div id="diffUpdate"></div>
+				</div>	
+				<div class="row">
+					<br/>
+					<br/>
+					<h3>&nbsp;<br/></h3>
+				</div>	
 			</div>
   			<div class="col-lg-1 col-md-2 col-sm-2 col-xs-1 transDivStyle">
 			</div>
@@ -148,29 +161,44 @@
 			  var data = "";
 			  var url = "/api/read-rt-data";
 			  $.post(url, data, function(data) {
+				console.log("got read result");
 				//console.log(data);
 				for (var i=0; i<data.length; i++) {
-					var idStr = "#M" + data[i].mach_num.trim();
-					$(idStr).removeClass();
-					var statusStr = "";
-					switch (data[i].mach_stat_code) {
-						case "00":
-						  statusStr = "statusOff"; 
-						  break;
-						case "01":
-						  statusStr = "statusOn";
-						  break;
-						case "03":
-						  statusStr = "statusRun";
-						  break;
-						case "09":
-						  statusStr = "statusHold";
-						  break;    
+					if (data[i].mach_num.trim() == "98" || data[i].mach_num.trim() == "99") {
+						//this is the update time
+						if (data[i].mach_num.trim() == "98") {
+							//this is the difference
+							$("#diffUpdate").html("<h4>Hours since update: " + data[i].mach_stat_code + "</h4>");
+						};
+						if (data[i].mach_num.trim() == "99") {
+							//this is the last update
+							$("#lastUpdate").html("<h4>Last updated: " + data[i].mach_stat_code + "</h4>");
+						};
+					} else {
+						//a machine update 
+						var idStr = "#M" + data[i].mach_num.trim();
+						$(idStr).removeClass();
+						var statusStr = "";
+						switch (data[i].mach_stat_code) {
+							case "00":
+						  		statusStr = "statusOff"; 
+						  		break;
+							case "01":
+						  		statusStr = "statusOn";
+						  		break;
+							case "03":
+						  		statusStr = "statusRun";
+						  		break;
+							case "09":
+						  		statusStr = "statusHold";
+						  	break;    
+						};
+						$(idStr).addClass(statusStr);
 					};
-					$(idStr).addClass(statusStr);
 				};
 			  });
-		};
+		};  // readData function
+
 
 
   	    $(document).ready(function () {
@@ -218,7 +246,7 @@
 		  $('#btn-startRead').on('click', function (event) {
 			  event.preventDefault();
 			  console.log("clicked read button");
-			  tmrHandle = setInterval(readData,2000);
+			  tmrHandle = setInterval(readData,6000);  //2000 or 2 secs is about min can do
 		  });
 
 
