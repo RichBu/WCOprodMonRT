@@ -87,6 +87,9 @@
 					<div id="diffUpdate"></div>
 				</div>	
 				<div class="row">
+					<div id="tmrUpdate"></div>
+				</div>	
+				<div class="row">
 					<br/>
 					<br/>
 					<h3>&nbsp;<br/></h3>
@@ -141,6 +144,8 @@
 
 		<script>
 		var tmrHandle = 0;
+		var tmrEndVal = 6;
+		var tmrCounts = 0;
 
 		var closeModals = function() {
 			var modAbout = $("#modal-about");
@@ -157,6 +162,17 @@
 		};
 
 
+
+		var tmrClick = function() {
+			tmrCounts = tmrCounts + 1;
+			$("#tmrUpdate").html("<h4>Seconds to refresh: " + (tmrEndVal-tmrCounts) + "</h4>");
+			if (tmrCounts == tmrEndVal) {
+				tmrCounts = 0;
+				readData();
+			};
+		}
+
+
 		var readData = function() {
 			  var data = "";
 			  var url = "/api/read-rt-data";
@@ -168,11 +184,11 @@
 						//this is the update time
 						if (data[i].mach_num.trim() == "98") {
 							//this is the difference
-							$("#diffUpdate").html("<h4>Hours since update: " + data[i].mach_stat_code + "</h4>");
+							$("#diffUpdate").html("<h4>Hours since reading: " + data[i].mach_stat_code + "</h4>");
 						};
 						if (data[i].mach_num.trim() == "99") {
 							//this is the last update
-							$("#lastUpdate").html("<h4>Last updated: " + data[i].mach_stat_code + "</h4>");
+							$("#lastUpdate").html("<h4>Last prod reading: " + data[i].mach_stat_code + "</h4>");
 						};
 					} else {
 						//a machine update 
@@ -246,7 +262,9 @@
 		  $('#btn-startRead').on('click', function (event) {
 			  event.preventDefault();
 			  console.log("clicked read button");
-			  tmrHandle = setInterval(readData,6000);  //2000 or 2 secs is about min can do
+			  tmrCounts = 0;
+			  tmrHandle = setInterval(tmrClick,1000);  //2000 or 2 secs is about min can do
+			  readData();
 		  });
 
 
