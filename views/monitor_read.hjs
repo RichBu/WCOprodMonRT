@@ -184,11 +184,11 @@
 						//this is the update time
 						if (data[i].mach_num.trim() == "98") {
 							//this is the difference
-							$("#diffUpdate").html("<h4>Hours since reading: " + data[i].mach_stat_code + "</h4>");
+							$("#diffUpdate").html("<h4>Hours since upload: " + data[i].mach_stat_code + "</h4>");
 						};
 						if (data[i].mach_num.trim() == "99") {
 							//this is the last update
-							$("#lastUpdate").html("<h4>Last prod reading: " + data[i].mach_stat_code + "</h4>");
+							$("#lastUpdate").html("<h4>Last upload: " + data[i].mach_stat_code + "</h4>");
 						};
 					} else {
 						//a machine update 
