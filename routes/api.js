@@ -93,7 +93,7 @@ router.post('/update-rt-data', function(req, res, next) {
         */
         //log has been written, now write to the log file table
 
-        currDate = moment();
+        currDate = moment().add(-5, 'hours');
         console.log("curr date =" + currDate);
         currDateUnix = currDate.valueOf();
         currDateUnix_int = parseInt(currDateUnix);
@@ -205,7 +205,7 @@ router.post('/update-rt-data', function(req, res, next) {
             res.render('index');
         });
     };
-});
+}); //update-rt-data
 
 
 
@@ -291,14 +291,16 @@ router.post('/read-rt-data', function(req, res, next) {
                 } else {
                     dataOutput.push(new outputObj(
                         response[i].mach_num,
-                        response[i].mach_stat_code
+                        response[i].mach_stat_code,
+                        response[i].fault_code,
+                        response[i].fault_descrip
                     ));
                 };
             };
 
             //calculate the time difference
             let currDateUnix = moment().valueOf();
-            let updDate = moment(updateDate_int);
+            let updDate = moment(updateDate_int).add(-5, 'hours');
             let curDate = moment(currDateUnix);
             let diffTotSecs_mom = curDate.diff(updDate, 'seconds');
             let diffTotSecs = diffTotSecs_mom.valueOf();
