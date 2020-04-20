@@ -67,16 +67,25 @@
 				<div class="row">
 				</div>
 				<!-- Status Output -->
-				<div class="row">
-					<div id="M01" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp01</h3></div>
-					<div id="M02" class="statusOn"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp02</h3></div>
-					<div id="M03" class="statusOn"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp03</h3></div>
-					<div id="M04" class="statusRun"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp04</h3></div>
-					<div id="M05" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp05</h3></div>
-					<div id="M06" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp06</h3></div>
-					<div id="M07" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp07</h3></div>
-					<div id="M08" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp08</h3></div>
-					<div id="M09" class="statusOff"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp09</h3></div>
+				<div id="outputDiv_head" class="row">
+					<h5>click on picture for more information</h5>
+				</div>
+				<div id="outputDiv" class="row">
+					<div id="M01" class="statusOff blockPic" data-pic="01"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp01</h3></div>
+					<div id="M02" class="statusOn  blockPic" data-pic="02"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp02</h3></div>
+					<div id="M03" class="statusOn  blockPic" data-pic="03"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp03</h3></div>
+					<div id="M04" class="statusRun blockPic" data-pic="04"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp04</h3></div>
+					<div id="M05" class="statusOff blockPic" data-pic="05"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp05</h3></div>
+					<div id="M06" class="statusOff blockPic" data-pic="06"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp06</h3></div>
+					<div id="M07" class="statusOff blockPic" data-pic="07"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp07</h3></div>
+					<div id="M08" class="statusOff blockPic" data-pic="08"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp08</h3></div>
+					<div id="M09" class="statusOff blockPic" data-pic="09"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp09</h3></div>
+				</div>	
+				<div id="outputDiv_foot" class="row">
+					<h5>click on picture for more information</h5>
+				</div>
+				<!-- Machine Data Output -->
+				<div id="machineDiv" class="row">
 				</div>	
 				<div class="row">
 					<br/>
@@ -170,7 +179,48 @@
 				tmrCounts = 0;
 				readData();
 			};
-		}
+		};
+
+		var displayDiv = function(divType) {
+			//turn on divs based on value passed in
+			//0=all off  1=all  2=single machine
+			console.log("display " + divType);
+			switch (divType) {
+				case 0: 
+					$('#outputDiv').removeClass('showDiv');
+					$('#outputDiv').addClass('hideDiv');
+					$('#outputDiv_head').removeClass('showDiv');
+					$('#outputDiv_head').addClass('hideDiv');
+					$('#outputDiv_foot').removeClass('showDiv');
+					$('#outputDiv_foot').addClass('hideDiv');
+					$('#machineDiv').removeClass('showDiv');
+					$('#machineDiv').addClass('hideDiv');
+					dispType = 0;
+					break;
+				case 1:
+					$('#outputDiv').removeClass('hideDiv');
+					$('#outputDiv').addClass('showDiv');
+					$('#outputDiv_head').removeClass('hideDiv');
+					$('#outputDiv_head').addClass('showDiv');
+					$('#outputDiv_foot').removeClass('hideDiv');
+					$('#outputDiv_foot').addClass('showDiv');
+					$('#machineDiv').removeClass('showDiv');
+					$('#machineDiv').addClass('hideDiv');
+					dispType = 1;
+					break;
+				case 2:
+					$('#outputDiv').removeClass('showDiv');
+					$('#outputDiv').addClass('hideDiv');
+					$('#outputDiv_head').removeClass('showDiv');
+					$('#outputDiv_head').addClass('hideDiv');
+					$('#outputDiv_foot').removeClass('showDiv');
+					$('#outputDiv_foot').addClass('hideDiv');
+					$('#machineDiv').removeClass('hideDiv');
+					$('#machineDiv').addClass('showDiv');
+					dispType = 2;
+					break;
+			};
+		};
 
 
 		var readData = function() {
@@ -291,6 +341,26 @@
 					console.log("got result");
 				});
     		});  //end of click			
+ 
+
+			$('#machineDiv').on('click', function (event) {
+				event.preventDefault();
+				displayDiv(1);  //disp full table
+			});
+
+
+			$('.blockPic').on('click', function (event) {
+				event.preventDefault();
+				currMach = $(this).attr("data-pic");
+				//clear the div first before displaying it
+				console.log("clicked on block " + currMach);
+				$("#machineDiv").html("");
+				displayDiv(2);  //disp one machine
+				readData();
+			});
+
+			displayDiv(1); //display all machines
+
   	    });
 
 		</script>

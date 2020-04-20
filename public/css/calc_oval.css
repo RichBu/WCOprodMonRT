@@ -385,3 +385,11 @@ input {
     border-width: 2px;
     border-color: black;
 }
+
+.hideDiv {
+    display: none;
+}
+
+.showDiv {
+    display: block;
+}
