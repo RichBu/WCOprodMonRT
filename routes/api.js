@@ -300,7 +300,7 @@ router.post('/read-rt-data', function(req, res, next) {
 
             //calculate the time difference
             let currDateUnix = moment().valueOf();
-            let updDate = moment(updateDate_int).add(-5, 'hours');
+            let updDate = moment(updateDate_int).add(+5, 'hours');
             let curDate = moment(currDateUnix);
             let diffTotSecs_mom = curDate.diff(updDate, 'seconds');
             let diffTotSecs = diffTotSecs_mom.valueOf();
