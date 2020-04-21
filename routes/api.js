@@ -50,6 +50,17 @@ router.post('/update-rt-data', function(req, res, next) {
     var M8 = req.body.M8;
     var M9 = req.body.M9;
 
+    let newMachStat = [];
+    newMachStat.push(M1);
+    newMachStat.push(M2);
+    newMachStat.push(M3);
+    newMachStat.push(M4);
+    newMachStat.push(M5);
+    newMachStat.push(M6);
+    newMachStat.push(M7);
+    newMachStat.push(M8);
+    newMachStat.push(M9);
+
     let currDate = moment();
     let currDateUnix = moment.unix(currDate);
 
@@ -91,8 +102,33 @@ router.post('/update-rt-data', function(req, res, next) {
             userLogRec.action_done
         ], function(err, response) {
         */
-        //log has been written, now write to the log file table
 
+
+        function mach_stat_type(_mach_num, _mach_stat_code,
+            _event_1_desc, _event_1_time, _event_1_dur,
+            _event_2_desc, _event_2_time, _event_2_dur,
+            _event_3_desc, _event_3_time, _event_3_dur,
+            _event_4_desc, _event_4_time, _event_4_dur
+        ) {
+            this.mach_num = _mach_num,
+                this.mach_stat_code = _mach_stat_code,
+                this.event_1_desc = _event_1_desc,
+                this.event_1_time = _event_1_time,
+                this.event_1_dur = _event_1_dur,
+                this.event_2_desc = _event_2_desc,
+                this.event_2_time = _event_2_time,
+                this.event_2_dur = _event_2_dur,
+                this.event_3_desc = _event_3_desc,
+                this.event_3_time = _event_3_time,
+                this.event_3_dur = _event_3_dur,
+                this.event_4_desc = _event_4_desc,
+                this.event_4_time = _event_4_time,
+                this.event_4_dur = _event_4_dur
+        };
+
+        let mach_stat_rec = [];
+
+        //log has been written, now write to the log file table
         currDate = moment().add(-5, 'hours');
         console.log("curr date =" + currDate);
         currDateUnix = currDate.valueOf();
@@ -103,84 +139,112 @@ router.post('/update-rt-data', function(req, res, next) {
         let currDateStr = currDate.format("YYYY-MM-DD HH:mm:ss");
         console.log("curr date as a string = " + currDateStr);
 
-        for (var machLp = 0; machLp < (numMach); machLp++) {
-            //loop thru all of the machines
-            var outMachNum = "";
-            var outMachCode = "";
-            switch (machLp) {
-                case 0:
-                    outMachNum = "01";
-                    outMachCode = M1;
-                    break;
-                case 1:
-                    outMachNum = "02";
-                    outMachCode = M2;
-                    break;
-                case 2:
-                    outMachNum = "03";
-                    outMachCode = M3;
-                    break;
-                case 3:
-                    outMachNum = "04";
-                    outMachCode = M4;
-                    break;
-                case 4:
-                    outMachNum = "05";
-                    outMachCode = M5;
-                    break;
-                case 5:
-                    outMachNum = "06";
-                    outMachCode = M6;
-                    break;
-                case 6:
-                    outMachNum = "07";
-                    outMachCode = M7;
-                    break;
-                case 7:
-                    outMachNum = "08";
-                    outMachCode = M8;
-                    break;
-                case 8:
-                    outMachNum = "09";
-                    outMachCode = M9;
-                    break;
-            }; //switch statement
+        var query1 = "SELECT * FROM mach_stat";
+        connection.query(query1, [], function(err, oldMachData) {
+            //read in oldMachData from the query
+            for (let machLp = 0; machLp < (numMach); machLp++) {
+                //loop thru all of the machines
+                console.log("# " + machLp + " = ");
+                console.log(oldMachData[machLp]);
+                var outMachNum = "";
+                var outMachCode = "";
+                switch (machLp) {
+                    case 0:
+                        outMachNum = "01";
+                        outMachCode = M1;
+                        break;
+                    case 1:
+                        outMachNum = "02";
+                        outMachCode = M2;
+                        break;
+                    case 2:
+                        outMachNum = "03";
+                        outMachCode = M3;
+                        break;
+                    case 3:
+                        outMachNum = "04";
+                        outMachCode = M4;
+                        break;
+                    case 4:
+                        outMachNum = "05";
+                        outMachCode = M5;
+                        break;
+                    case 5:
+                        outMachNum = "06";
+                        outMachCode = M6;
+                        break;
+                    case 6:
+                        outMachNum = "07";
+                        outMachCode = M7;
+                        break;
+                    case 7:
+                        outMachNum = "08";
+                        outMachCode = M8;
+                        break;
+                    case 8:
+                        outMachNum = "09";
+                        outMachCode = M9;
+                        break;
+                }; //switch statement
 
-            //now need to make the query be synchronous instead of async
-            var continF = 0
-            var query2 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
-            connection.query(query2, [
-                outMachCode,
-                outMachNum
+                if (oldMachData[machLp].mach_stat_code != outMachCode) {
+                    //need to update because the status changed
+                    var continF = 0
+                    let query2 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
+                    connection.query(query2, [
+                        outMachCode,
+                        outMachNum
+                    ], function(err2, response2) {
+                        //should check if there is an error
+                        continF = 1;
+
+                        let mach_stat_rec_store = new mach_stat_type(
+                            outMachNum, outMachCode,
+                            oldMachData[machLp].event_1_desc, oldMachData[machLp].event_1_time, oldMachData[machLp].event_1_dur,
+                            oldMachData[machLp].event_2_desc, oldMachData[machLp].event_2_time, oldMachData[machLp].event_2_dur,
+                            oldMachData[machLp].event_3_desc, oldMachData[machLp].event_3_time, oldMachData[machLp].event_3_dur,
+                            oldMachData[machLp].event_4_desc, oldMachData[machLp].event_4_time, oldMachData[machLp].event_4_dur
+                        );
+
+                        //update the mach_stat
+                        let query3 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
+                        connection.query(query3, [
+                            mach_stat_rec_store.mach_stat_code,
+                            mach_stat_rec_store.event_1_desc,
+                            mach_stat_rec_store.event_1_time,
+                            mach_stat_rec_store.event_1_dur,
+                            mach_stat_rec_store.event_2_desc,
+                            mach_stat_rec_store.event_2_time,
+                            mach_stat_rec_store.event_2_dur,
+                            mach_stat_rec_store.event_3_desc,
+                            mach_stat_rec_store.event_3_time,
+                            mach_stat_rec_store.event_3_dur,
+                            mach_stat_rec_store.event_4_desc,
+                            mach_stat_rec_store.event_4_time,
+                            mach_stat_rec_store.event_4_dur,
+                            mach_stat_rec_store.mach_num
+                        ], function(err3, response3) {
+                            //should check if there is an error
+                            continF = 1;
+                        });
+                    }); //query UPDATE mach_rt
+                };
+            }; //for loop
+
+            //stored all the data now store the time done
+            let query3 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
+            connection.query(query3, [
+                currDateUnix_int,
+                "99"
             ], function(err2, response2) {
                 //should check if there is an error
                 continF = 1;
-                /*
-                var query3 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
-                connection.query(query3, [
-                    "99",
-                    "0000" //currDateUnix
-                ], function(err3, response3) {
-                    //should check if there is an error
-                    continF = 1;
-                });
-                */
             });
-        }; //for loop
 
-        //stored all the data now store the time done
-        var query3 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
-        connection.query(query3, [
-            currDateUnix_int,
-            "99"
-        ], function(err2, response2) {
-            //should check if there is an error
-            continF = 1;
-        });
-
-        res.status(201).send(); //201 means record has been created
-        //}); //query to write to user log	
+            res.status(201).send(); //201 means record has been created
+        }); //query to read old mach_stat
     } else {
+        //not logged in
         var actionDone = 'api-post RT data';
         var actionString = 'tried to add but timed out';
 

@@ -333,7 +333,6 @@ router.get('/monitor_main', function(req, res, next) {
     let clientIP;
     let userLoggedIn = true;
 
-
     //normally would check if logged in, but now just do it all the time
     //userLoggedIn = true;
     if (req.session.logged_in == true) {

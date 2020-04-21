@@ -77,3 +77,22 @@ CREATE TABLE mach_rt (
     mach_stat_code VARCHAR(20),
     PRIMARY KEY (mach_num)
 )
+
+
+CREATE TABLE mach_stat (
+    mach_num VARCHAR(2),
+    mach_stat_code VARCHAR(20),
+    event_1_desc VARCHAR(10),
+    event_1_time VARCHAR(15),
+    event_1_dur VARCHAR(15),
+    event_2_desc VARCHAR(10),
+    event_2_time VARCHAR(15),
+    event_2_dur VARCHAR(15),
+    event_3_desc VARCHAR(10),
+    event_3_time VARCHAR(15),
+    event_3_dur VARCHAR(15),
+    event_4_desc VARCHAR(10),
+    event_4_time VARCHAR(15),
+    event_4_dur VARCHAR(15),
+    PRIMARY KEY (mach_num)
+)
