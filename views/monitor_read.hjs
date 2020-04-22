@@ -62,13 +62,13 @@
 					<button id="btn-stopRead" class="calcButton btn btn-primary" >Stop Reading</button>	
 					<br/>
 					<br/>
-					<br/><h3>&nbsp</h3>
+					<br/><h3>&nbsp;</h3>
 				</div>				
 				<div class="row">
 				</div>
 				<!-- Status Output -->
 				<div id="outputDiv_head" class="row">
-					<h5>click on picture for more information</h5>
+					<h5>click on square for more information</h5>
 				</div>
 				<div id="outputDiv" class="row">
 					<div id="M01" class="statusOff blockPic" data-pic="01"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp01</h3></div>
@@ -82,10 +82,10 @@
 					<div id="M09" class="statusOff blockPic" data-pic="09"><h3>&nbsp&nbsp&nbsp&nbsp&nbsp09</h3></div>
 				</div>	
 				<div id="outputDiv_foot" class="row">
-					<h5>click on picture for more information</h5>
+					<h5>click on square for more information</h5>
 				</div>
 				<!-- Machine Data Output -->
-				<div id="machineDiv" class="row">
+				<div id="machineDiv" class="row blockPic">
 				</div>	
 				<div class="row">
 					<br/>
@@ -155,6 +155,8 @@
 		var tmrHandle = 0;
 		var tmrEndVal = 6;
 		var tmrCounts = 0;
+		var dispType = 0;    //0=none  1=full table  2=one mach
+		var currMach = 0;    //current machine
 
 		var closeModals = function() {
 			var modAbout = $("#modal-about");
@@ -225,8 +227,15 @@
 
 		var readData = function() {
 			  var data = "";
+			  var machStr = "-99";
+			  if (dispType==2) {
+				//displaying just a single machine
+				machStr =  currMach;
+			  };
+
+			  var dataOut = { machNum: machStr, testfield: "00" };
 			  var url = "/api/read-rt-data";
-			  $.post(url, data, function(data) {
+			  $.post(url, dataOut, function(data) {
 				console.log("got read result");
 				//console.log(data);
 				for (var i=0; i<data.length; i++) {
@@ -242,26 +251,167 @@
 						};
 					} else {
 						//a machine update 
-						var idStr = "#M" + data[i].mach_num.trim();
-						$(idStr).removeClass();
-						var statusStr = "";
-						switch (data[i].mach_stat_code) {
-							case "00":
-						  		statusStr = "statusOff"; 
-						  		break;
-							case "01":
-						  		statusStr = "statusOn";
-						  		break;
-							case "03":
-						  		statusStr = "statusRun";
-						  		break;
-							case "09":
-						  		statusStr = "statusHold";
-						  	break;    
-						};
-						$(idStr).addClass(statusStr);
-					};
-				};
+						//it is not '99' nor '98'
+						if (dispType==1) {
+							var idStr = "#M" + data[i].mach_num.trim();
+							$(idStr).removeClass();
+							var statusStr = "";
+							switch (data[i].mach_stat_code) {
+								case "00":
+						  			statusStr = "statusOff"; 
+						  			break;
+								case "01":
+							  		statusStr = "statusOn";
+						  			break;
+								case "03":
+							  		statusStr = "statusRun";
+						  			break;
+								case "09":
+							  		statusStr = "statusHold";
+						  		break;    
+							};
+							$(idStr).addClass(statusStr);
+						} else {
+							//single machine
+							var mainDiv = $("#machineDiv").html("");
+							var hTag1 = $("<h2>");
+							hTag1.append('M' + data[i].mach_num);
+							hTag1.append("<br/>");
+							mainDiv.append(hTag1);
+
+							var hTag2 = $('<h5>');
+							hTag2.append('(click to close)');
+							mainDiv.append(hTag2);
+
+							var divTag = $('<div>');
+							divTag.attr('id', 'currStatus');
+							//var imgTag = $('<img src="'+'/images/Blank_01.jpg">');
+							//divTag.append(imgTag);
+							mainDiv.append(divTag);
+
+							var idStr = "#currStatus";
+							var statusStr = "statusOffFull";
+							var statusDec = "";  //description to print
+							$(idStr).removeClass(statusStr);
+							statusStr = "statusOnFull";
+							$(idStr).removeClass(statusStr);
+							statusStr = "statusRunFull";
+							$(idStr).removeClass(statusStr);
+							statusStr = "statusHoldFull";
+							$(idStr).removeClass(statusStr);
+
+							switch (data[i].mach_stat_code) {
+								case "00":
+						  			statusStr = "statusOffFull"; 
+									statusDesc = "off-line";
+						  			break;
+								case "01":
+									statusStr = "statusOnFull";
+									statusDesc = "not running";
+						  			break;
+								case "03":
+									statusStr = "statusRunFull";
+									statusDesc = "running";
+						  			break;
+								case "09":
+									statusStr = "statusHoldFull";
+									statusDesc = "warning";
+						  			break;    
+							};
+							$(idStr).addClass(statusStr);
+
+							//current status description
+							var hTag10 = $('<h4>')
+							hTag10.append(statusDesc);
+							mainDiv.append(hTag10);
+
+							var hTag3 = $('<h4>');
+							///hTag3.append("list of events:");
+							hTag3.append("<br/><br/>");
+							hTag3.append("#1: &nbsp;");
+							hTag3.append(data[i].event_1_desc);
+							hTag3.append("&nbsp;&nbsp; @<br/>");
+							hTag3.append(data[i].event_1_time);
+							mainDiv.append(hTag3);
+
+							var hTag4 = $('<h4>');
+							//hTag4.append("<br/>");
+							hTag4.append("<br/>");
+							hTag4.append("#2: &nbsp;");
+							hTag4.append(data[i].event_2_desc);
+							hTag4.append("&nbsp;&nbsp; @<br/>");
+							hTag4.append(data[i].event_2_time);
+							mainDiv.append(hTag4);
+
+							var hTag5 = $('<h4>');
+							//hTag5.append("<br/>");
+							hTag5.append("<br/>");
+							hTag5.append("#3: &nbsp;");
+							hTag5.append(data[i].event_3_desc);
+							hTag5.append("&nbsp;&nbsp; @<br/>");
+							hTag5.append(data[i].event_3_time);
+							mainDiv.append(hTag5);
+
+							var hTag6 = $('<h4>');
+							//hTag6.append("<br/>");
+							hTag6.append("<br/>");
+							hTag6.append("#4: &nbsp;");
+							hTag6.append(data[i].event_4_desc);
+							hTag6.append("&nbsp;&nbsp; @<br/>");
+							hTag6.append(data[i].event_4_time);
+							mainDiv.append(hTag6);
+
+
+							var divTag = $('<div>');
+							divTag.attr('id', 'currStatus');
+							//var imgTag = $('<img src="'+'/images/Blank_01.jpg">');
+							//divTag.append(imgTag);
+							mainDiv.append(divTag);
+
+							var idStr = "#currStatus";
+							var statusStr = "statusOffFull";
+							var statusDec = "";  //description to print
+							$(idStr).removeClass(statusStr);
+							statusStr = "statusOnFull";
+							$(idStr).removeClass(statusStr);
+							statusStr = "statusRunFull";
+							$(idStr).removeClass(statusStr);
+							statusStr = "statusHoldFull";
+							$(idStr).removeClass(statusStr);
+
+							switch (data[i].mach_stat_code) {
+								case "00":
+						  			statusStr = "statusOffFull"; 
+									statusDesc = "off-line";
+						  			break;
+								case "01":
+									statusStr = "statusOnFull";
+									statusDesc = "not running";
+						  			break;
+								case "03":
+									statusStr = "statusRunFull";
+									statusDesc = "running";
+						  			break;
+								case "09":
+									statusStr = "statusHoldFull";
+									statusDesc = "warning";
+						  			break;    
+							};
+							$(idStr).addClass(statusStr);
+
+							//current status description
+							var hTag7 = $('<h4>')
+							hTag7.append(statusDesc);
+
+							//fault code
+							var brTag_06 = $('<br/>');
+							var brTag_07 = $('<br/>');
+							hTag7.append(brTag_06);
+							hTag7.append(brTag_07);
+
+						}; //else a single machine
+					};  //mach num not '99' or '98'
+				}; //for loop
 			  });
 		};  // readData function
 
@@ -351,12 +501,14 @@
 
 			$('.blockPic').on('click', function (event) {
 				event.preventDefault();
-				currMach = $(this).attr("data-pic");
-				//clear the div first before displaying it
 				console.log("clicked on block " + currMach);
-				$("#machineDiv").html("");
-				displayDiv(2);  //disp one machine
-				readData();
+				currMach = $(this).attr("data-pic");
+				if (currMach != undefined ) {
+					//clear the div first before displaying it
+					$("#machineDiv").html("");
+					displayDiv(2);  //disp one machine
+					readData();
+				};
 			});
 
 			displayDiv(1); //display all machines

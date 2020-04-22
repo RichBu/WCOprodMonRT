@@ -91,19 +91,6 @@ router.post('/update-rt-data', function(req, res, next) {
         );
 
 
-        /*
-        var query = "INSERT INTO user_log (time_str, ip_addr, loginName, password, fullName, action_done) VALUES (?, ?, ?, ?, ?, ? )";
-        connection.query(query, [
-            userLogRec.timeStr,
-            userLogRec.clientIP,
-            userLogRec.loginName,
-            userLogRec.password,
-            userLogRec.fullName,
-            userLogRec.action_done
-        ], function(err, response) {
-        */
-
-
         function mach_stat_type(_mach_num, _mach_stat_code,
             _event_1_desc, _event_1_time, _event_1_dur,
             _event_2_desc, _event_2_time, _event_2_dur,
@@ -130,22 +117,15 @@ router.post('/update-rt-data', function(req, res, next) {
 
         //log has been written, now write to the log file table
         currDate = moment().add(-5, 'hours');
-        console.log("curr date =" + currDate);
         currDateUnix = currDate.valueOf();
         currDateUnix_int = parseInt(currDateUnix);
-        //currDateUnix = currDateUnix.valueOf;
-        console.log("unix=" + currDateUnix_int);
-        console.log("date to write to = " + moment(currDateUnix_int).format("YYYY-MM-DD HH:mm:ss"));
         let currDateStr = currDate.format("YYYY-MM-DD HH:mm:ss");
-        console.log("curr date as a string = " + currDateStr);
 
         var query1 = "SELECT * FROM mach_stat";
         connection.query(query1, [], function(err, oldMachData) {
             //read in oldMachData from the query
             for (let machLp = 0; machLp < (numMach); machLp++) {
                 //loop thru all of the machines
-                console.log("# " + machLp + " = ");
-                console.log(oldMachData[machLp]);
                 var outMachNum = "";
                 var outMachCode = "";
                 switch (machLp) {
@@ -189,6 +169,7 @@ router.post('/update-rt-data', function(req, res, next) {
 
                 if (oldMachData[machLp].mach_stat_code != outMachCode) {
                     //need to update because the status changed
+                    //console.log("..need to update..");
                     var continF = 0
                     let query2 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
                     connection.query(query2, [
@@ -197,38 +178,51 @@ router.post('/update-rt-data', function(req, res, next) {
                     ], function(err2, response2) {
                         //should check if there is an error
                         continF = 1;
-
-                        let mach_stat_rec_store = new mach_stat_type(
-                            outMachNum, outMachCode,
-                            oldMachData[machLp].event_1_desc, oldMachData[machLp].event_1_time, oldMachData[machLp].event_1_dur,
-                            oldMachData[machLp].event_2_desc, oldMachData[machLp].event_2_time, oldMachData[machLp].event_2_dur,
-                            oldMachData[machLp].event_3_desc, oldMachData[machLp].event_3_time, oldMachData[machLp].event_3_dur,
-                            oldMachData[machLp].event_4_desc, oldMachData[machLp].event_4_time, oldMachData[machLp].event_4_dur
-                        );
-
-                        //update the mach_stat
-                        let query3 = "UPDATE mach_rt SET mach_stat_code=? WHERE mach_num=?";
-                        connection.query(query3, [
-                            mach_stat_rec_store.mach_stat_code,
-                            mach_stat_rec_store.event_1_desc,
-                            mach_stat_rec_store.event_1_time,
-                            mach_stat_rec_store.event_1_dur,
-                            mach_stat_rec_store.event_2_desc,
-                            mach_stat_rec_store.event_2_time,
-                            mach_stat_rec_store.event_2_dur,
-                            mach_stat_rec_store.event_3_desc,
-                            mach_stat_rec_store.event_3_time,
-                            mach_stat_rec_store.event_3_dur,
-                            mach_stat_rec_store.event_4_desc,
-                            mach_stat_rec_store.event_4_time,
-                            mach_stat_rec_store.event_4_dur,
-                            mach_stat_rec_store.mach_num
-                        ], function(err3, response3) {
-                            //should check if there is an error
-                            continF = 1;
-                        });
                     }); //query UPDATE mach_rt
-                };
+                    //write to the mach_stat at the same time
+
+                    //push down the stack by using offset indexes
+                    let new_desc = "stop";
+                    if (outMachCode == "03") new_desc = "start";
+                    if (outMachCode == "00") new_desc = "off line";
+                    let new_time = currDateUnix_int;
+                    let new_dur = "0";
+
+                    let mach_stat_rec_store = new mach_stat_type(
+                        outMachNum, outMachCode,
+                        new_desc, new_time, new_dur,
+                        oldMachData[machLp].event_1_desc, oldMachData[machLp].event_1_time, oldMachData[machLp].event_1_dur,
+                        oldMachData[machLp].event_2_desc, oldMachData[machLp].event_2_time, oldMachData[machLp].event_2_dur,
+                        oldMachData[machLp].event_3_desc, oldMachData[machLp].event_3_time, oldMachData[machLp].event_3_dur
+                    );
+
+                    //update the mach_stat
+                    let query3 = "UPDATE mach_stat SET mach_stat_code=?, ";
+                    query3 = query3 + "event_1_desc=?, event_1_time=?, event_1_dur=?,";
+                    query3 = query3 + "event_2_desc=?, event_2_time=?, event_2_dur=?,";
+                    query3 = query3 + "event_3_desc=?, event_3_time=?, event_3_dur=?,";
+                    query3 = query3 + "event_4_desc=?, event_4_time=?, event_4_dur=? ";
+                    query3 = query3 + "WHERE mach_num=?";
+                    connection.query(query3, [
+                        mach_stat_rec_store.mach_stat_code,
+                        mach_stat_rec_store.event_1_desc,
+                        mach_stat_rec_store.event_1_time,
+                        mach_stat_rec_store.event_1_dur,
+                        mach_stat_rec_store.event_2_desc,
+                        mach_stat_rec_store.event_2_time,
+                        mach_stat_rec_store.event_2_dur,
+                        mach_stat_rec_store.event_3_desc,
+                        mach_stat_rec_store.event_3_time,
+                        mach_stat_rec_store.event_3_dur,
+                        mach_stat_rec_store.event_4_desc,
+                        mach_stat_rec_store.event_4_time,
+                        mach_stat_rec_store.event_4_dur,
+                        mach_stat_rec_store.mach_num
+                    ], function(err3, response3) {
+                        //should check if there is an error
+                        continF = 1;
+                    });
+                }; //mach_stat_code will change  if statement
             }; //for loop
 
             //stored all the data now store the time done
@@ -288,6 +282,9 @@ router.post('/read-rt-data', function(req, res, next) {
     var M8 = "";
     var M9 = "";
 
+    var searchMach = '*';
+    searchMach = req.body.machNum;
+
     var loginValid = 'false';
     var outputUrl = '/';
 
@@ -335,32 +332,111 @@ router.post('/read-rt-data', function(req, res, next) {
                 this.mach_stat_code = _mach_stat_code
         };
 
+        //output for a single machine
+        function outputObj2(_machNum,
+            _mach_stat_code,
+            _event_1_desc,
+            _event_1_time,
+            _event_1_dur,
+            _event_2_desc,
+            _event_2_time,
+            _event_2_dur,
+            _event_3_desc,
+            _event_3_time,
+            _event_3_dur,
+            _event_4_desc,
+            _event_4_time,
+            _event_4_dur
+        ) {
+            this.mach_num = _machNum,
+                this.mach_stat_code = _mach_stat_code,
+                this.event_1_desc = _event_1_desc,
+                this.event_1_time = _event_1_time,
+                this.event_1_dur = _event_1_dur,
+                this.event_2_desc = _event_2_desc,
+                this.event_2_time = _event_2_time,
+                this.event_2_dur = _event_2_dur,
+                this.event_3_desc = _event_3_desc,
+                this.event_3_time = _event_3_time,
+                this.event_3_dur = _event_3_dur,
+                this.event_4_desc = _event_4_desc,
+                this.event_4_time = _event_4_time,
+                this.event_4_dur = _event_4_dur
+        };
+
         let updateDate = moment();
         let updateDate_int = 0;
         let updateDateStr = "";
-        var query2 = "SELECT * FROM mach_rt";
+        if (searchMach == "-99") {
+            //want all of the machines
+            var query2 = "SELECT * FROM mach_rt";
+        } else {
+            var query2 = "SELECT * FROM mach_stat WHERE mach_num='" + searchMach + "' OR mach_num='99'";
+        };
         connection.query(query2, [], function(err, response) {
-            for (var i = 0; i < response.length; i++) {
-                //loop thru all of the responses
-                if (response[i].mach_num == "99") {
-                    updateDate_int = parseInt(response[i].mach_stat_code);
-                    console.log("update int = " + updateDate_int);
-                    updateDate = moment(updateDate_int);
-                    updateDateStr = updateDate.format("HH:mm:ss MM/DD/YYYY");
-                    console.log("update date = " + updateDateStr);
-                    dataOutput.push(new outputObj(
-                        "99",
-                        updateDateStr
-                    ));
-                } else {
-                    dataOutput.push(new outputObj(
-                        response[i].mach_num,
-                        response[i].mach_stat_code,
-                        response[i].fault_code,
-                        response[i].fault_descrip
-                    ));
-                };
-            };
+            if (searchMach == "-99") {
+                for (var i = 0; i < response.length; i++) {
+                    //loop thru all of the responses
+                    if (response[i].mach_num == "99") {
+                        updateDate_int = parseInt(response[i].mach_stat_code);
+                        updateDate = moment(updateDate_int);
+                        updateDateStr = updateDate.format("HH:mm:ss MM/DD/YYYY");
+                        dataOutput.push(new outputObj(
+                            "99",
+                            updateDateStr
+                        ));
+                    } else {
+                        dataOutput.push(new outputObj(
+                            response[i].mach_num,
+                            response[i].mach_stat_code,
+                            response[i].fault_code,
+                            response[i].fault_descrip
+                        ));
+                    };
+                }; //for loop
+            } else {
+                //searching just one machine
+                //want output for a single machine
+                for (var i = 0; i < response.length; i++) {
+                    if (response[i].mach_num == "99") {
+                        updateDate_int = parseInt(response[i].mach_stat_code);
+                        updateDate = moment(updateDate_int);
+                        updateDateStr = updateDate.format("HH:mm:ss MM/DD/YYYY");
+                        dataOutput.push(new outputObj(
+                            "99",
+                            updateDateStr,
+                            "00",
+                            "upd"
+                        ));
+                    } else {
+                        let event_1_time_date = moment(parseInt(response[0].event_1_time));
+                        let event_1_time_str = event_1_time_date.format("HH:mm:ss MM/DD/YYYY");
+                        let event_2_time_date = moment(parseInt(response[0].event_2_time));
+                        let event_2_time_str = event_2_time_date.format("HH:mm:ss MM/DD/YYYY");
+                        let event_3_time_date = moment(parseInt(response[0].event_3_time));
+                        let event_3_time_str = event_3_time_date.format("HH:mm:ss MM/DD/YYYY");
+                        let event_4_time_date = moment(parseInt(response[0].event_4_time));
+                        let event_4_time_str = event_4_time_date.format("HH:mm:ss MM/DD/YYYY");
+
+                        dataOutput.push(new outputObj2(
+                            response[0].mach_num,
+                            response[0].mach_stat_code,
+                            response[0].event_1_desc,
+                            event_1_time_str,
+                            response[0].event_1_dur,
+                            response[0].event_2_desc,
+                            event_2_time_str,
+                            response[0].event_2_dur,
+                            response[0].event_3_desc,
+                            event_3_time_str,
+                            response[0].event_3_dur,
+                            response[0].event_4_desc,
+                            event_4_time_str,
+                            response[0].event_4_dur
+                        ));
+                    };
+                }; //for loop
+            }; //one machine look up
 
             //calculate the time difference
             let currDateUnix = moment().valueOf();

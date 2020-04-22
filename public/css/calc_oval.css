@@ -386,6 +386,54 @@ input {
     border-color: black;
 }
 
+.statusOffFull {
+    width: 20px;
+    height: 20px;
+    float: left;
+    background: white;
+    margin: 2px;
+    border: 2px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+}
+
+.statusOnFull {
+    width: 20px;
+    height: 20px;
+    float: left;
+    background: red;
+    margin: 2px;
+    border: 2px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+}
+
+.statusRunFull {
+    width: 20px;
+    height: 20px;
+    float: left;
+    background: green;
+    margin: 2px;
+    border: 2px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+}
+
+.statusHoldFull {
+    width: 20px;
+    height: 20px;
+    float: left;
+    background: orange;
+    margin: 2px;
+    border: 2px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+}
+
 .hideDiv {
     display: none;
 }
