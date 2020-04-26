@@ -434,6 +434,14 @@ input {
     border-color: black;
 }
 
+.statusBoxMargin {
+    margin: 10px 2px 2px 2px;
+}
+
+.statDivHead {
+    float: left;
+}
+
 .hideDiv {
     display: none;
 }

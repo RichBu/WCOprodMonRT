@@ -186,7 +186,6 @@
 		var displayDiv = function(divType) {
 			//turn on divs based on value passed in
 			//0=all off  1=all  2=single machine
-			console.log("display " + divType);
 			switch (divType) {
 				case 0: 
 					$('#outputDiv').removeClass('showDiv');
@@ -225,6 +224,66 @@
 		};
 
 
+		var getStatus = function( _mach_stat_code ) {
+			let statusStr = "";
+
+			switch ( _mach_stat_code ) {
+				case "00":
+					statusStr = "statusOffFull"; 
+					statusDesc = "off-line";
+					break;
+				case "01":
+					statusStr = "statusOnFull";
+					statusDesc = "not running";
+					break;
+				case "03":
+					statusStr = "statusRunFull";
+					statusDesc = "running";
+					break;
+				case "09":
+					statusStr = "statusHoldFull";
+					statusDesc = "warning";
+					break;    
+			};
+			return  [statusStr, statusDesc];
+		};
+
+
+		var createStatusDiv = function( _eventNum ) {
+			//function creates the div based on the eventNum
+			let eventStr = _eventNum;
+			let idStr = 'currStatus_' + eventStr;
+
+			let outputDivTag = $('<div>');
+			outputDivTag.attr('id', idStr);
+			return [idStr, outputDivTag];
+		};
+
+
+		var setDivStatus = function( _idStr, _mach_stat_code ) {
+			//function to set status on a div making it rectangle with proper color
+			_idStr = '#' + _idStr;
+			let statusStr = "statusOffFull";
+			let marginStr = "statusBoxMargin"
+
+			//first remove all possible status
+			$(_idStr).removeClass(statusStr);
+			statusStr = "statusOnFull";
+			$(_idStr).removeClass(statusStr);
+			statusStr = "statusRunFull";
+			$(_idStr).removeClass(statusStr);
+			statusStr = "statusHoldFull";
+			$(_idStr).removeClass(statusStr);
+
+			//call the function to retrun the status string
+			let statusOutput = getStatus( _mach_stat_code ); 
+			statusStr = statusOutput[0];
+
+			$(_idStr).addClass(statusStr);
+			if (_idStr != "#currStatus_0") $(_idStr).addClass(marginStr);
+		};
+
+
 		var readData = function() {
 			  var data = "";
 			  var machStr = "-99";
@@ -236,8 +295,6 @@
 			  var dataOut = { machNum: machStr, testfield: "00" };
 			  var url = "/api/read-rt-data";
 			  $.post(url, dataOut, function(data) {
-				console.log("got read result");
-				//console.log(data);
 				for (var i=0; i<data.length; i++) {
 					if (data[i].mach_num.trim() == "98" || data[i].mach_num.trim() == "99") {
 						//this is the update time
@@ -283,131 +340,192 @@
 							hTag2.append('(click to close)');
 							mainDiv.append(hTag2);
 
-							var divTag = $('<div>');
-							divTag.attr('id', 'currStatus');
-							//var imgTag = $('<img src="'+'/images/Blank_01.jpg">');
-							//divTag.append(imgTag);
-							mainDiv.append(divTag);
 
 							var idStr = "#currStatus";
 							var statusStr = "statusOffFull";
-							var statusDec = "";  //description to print
-							$(idStr).removeClass(statusStr);
-							statusStr = "statusOnFull";
-							$(idStr).removeClass(statusStr);
-							statusStr = "statusRunFull";
-							$(idStr).removeClass(statusStr);
-							statusStr = "statusHoldFull";
-							$(idStr).removeClass(statusStr);
+							var statusDesc = "";  //description to print
+							//function to create div tag
 
-							switch (data[i].mach_stat_code) {
-								case "00":
-						  			statusStr = "statusOffFull"; 
-									statusDesc = "off-line";
-						  			break;
-								case "01":
-									statusStr = "statusOnFull";
-									statusDesc = "not running";
-						  			break;
-								case "03":
-									statusStr = "statusRunFull";
-									statusDesc = "running";
-						  			break;
-								case "09":
-									statusStr = "statusHoldFull";
-									statusDesc = "warning";
-						  			break;    
-							};
-							$(idStr).addClass(statusStr);
+
+							//the current status is 0
+							let statusDiv0 = createStatusDiv(0);
+							
+							let idStr00 = statusDiv0[0];
+							var divTag00 = statusDiv0[1];
+							mainDiv.append(divTag00);
+
+						    let statusOutput = getStatus( data[i].mach_stat_code ); 
+							statusStr = statusOutput[0];
+							statusDesc = statusOutput[1];
+							setDivStatus(idStr00, data[i].mach_stat_code );
 
 							//current status description
 							var hTag10 = $('<h4>')
 							hTag10.append(statusDesc);
+							hTag10.append("<br/>");
+							hTag10.append("<br/>");
 							mainDiv.append(hTag10);
+
+							//wrap a div around one line, not really a row, but kind of like it
+							var divLine01 = $('<div>');
+
+							//wrap div around text to make it float next to colored stat rectangle
+							var divTag01h =$('<div>');
+							divTag01h.attr('id', 'div01h');
 
 							var hTag3 = $('<h4>');
 							///hTag3.append("list of events:");
-							hTag3.append("<br/><br/>");
-							hTag3.append("#1: &nbsp;");
-							hTag3.append(data[i].event_1_desc);
-							hTag3.append("&nbsp;&nbsp; @<br/>");
-							hTag3.append(data[i].event_1_time);
-							mainDiv.append(hTag3);
+							//hTag3.append("<br/><br/>");
+							hTag3.append("1: &nbsp;");
+							divTag01h.append(hTag3);
+							divLine01.append(divTag01h);
+
+							//the current status is 1
+							let statusDiv1 = createStatusDiv(1);
+							let idStr01 = statusDiv1[0];
+							var divTag01 = statusDiv1[1];
+							divLine01.append(divTag01);
+
+							var timeDiv1 = $('<div>');
+							timeDiv1.attr('id', 'timeDiv1');
+							var hTag3b = $('<h4>');
+							hTag3b.append("&nbsp;");
+							//hTag3b.append(data[i].event_1_desc);
+							hTag3b.append("&nbsp;&nbsp; ");
+							hTag3b.append(data[i].event_1_time);
+							timeDiv1.append(hTag3b);
+
+							divLine01.append(timeDiv1);
+							mainDiv.append(divLine01);
+							setDivStatus(idStr01, data[i].event_1_code)
+
+							$('#div01h').addClass('statDivHead');
+							$('#timeDiv1').addClass('statDivHead');
+
+							var hTag3c = $('<h4>');
+							hTag3c.append("<br/>");
+							hTag3c.append("<br/>");
+							mainDiv.append(hTag3c);
+
+
+							//wrap a div around one line, not really a row, but kind of like it
+							var divLine02 = $('<div>');
+
+							//wrap div around text to make it float next to colored stat rectangle
+							var divTag02h =$('<div>');
+							divTag02h.attr('id', 'div02h');
 
 							var hTag4 = $('<h4>');
-							//hTag4.append("<br/>");
-							hTag4.append("<br/>");
-							hTag4.append("#2: &nbsp;");
-							hTag4.append(data[i].event_2_desc);
-							hTag4.append("&nbsp;&nbsp; @<br/>");
-							hTag4.append(data[i].event_2_time);
-							mainDiv.append(hTag4);
+							hTag4.append("2: &nbsp;");
+							divTag02h.append(hTag4);
+							divLine02.append(divTag02h);
+
+							//the current status is 2
+							let statusDiv2 = createStatusDiv(2);
+							let idStr02 = statusDiv2[0];
+							var divTag02 = statusDiv2[1];
+							divLine02.append(divTag02);
+
+							var timeDiv2 = $('<div>');
+							timeDiv2.attr('id', 'timeDiv2');
+							var hTag4b = $('<h4>');
+							hTag4b.append("&nbsp;");
+							//hTag3b.append(data[i].event_1_desc);
+							hTag4b.append("&nbsp;&nbsp; ");
+							hTag4b.append(data[i].event_2_time);
+							timeDiv2.append(hTag4b);
+
+							divLine02.append(timeDiv2);
+							mainDiv.append(divLine02);
+							setDivStatus(idStr02, data[i].event_2_code)
+
+							$('#div02h').addClass('statDivHead');
+							$('#timeDiv2').addClass('statDivHead');
+
+							var hTag4c = $('<h4>');
+							hTag4c.append("<br/>");
+							hTag4c.append("<br/>");
+							mainDiv.append(hTag4c);
+
+
+							//wrap a div around one line, not really a row, but kind of like it
+							var divLine03 = $('<div>');
+
+							//wrap div around text to make it float next to colored stat rectangle
+							var divTag05h =$('<div>');
+							divTag05h.attr('id', 'div03h');
 
 							var hTag5 = $('<h4>');
-							//hTag5.append("<br/>");
-							hTag5.append("<br/>");
-							hTag5.append("#3: &nbsp;");
-							hTag5.append(data[i].event_3_desc);
-							hTag5.append("&nbsp;&nbsp; @<br/>");
-							hTag5.append(data[i].event_3_time);
-							mainDiv.append(hTag5);
+							hTag5.append("3: &nbsp;");
+							divTag05h.append(hTag5);
+							divLine03.append(divTag05h);
+
+							//the current status is 3
+							let statusDiv3 = createStatusDiv(3);
+							let idStr03 = statusDiv3[0];
+							var divTag03 = statusDiv3[1];
+							divLine03.append(divTag03);
+
+							var timeDiv3 = $('<div>');
+							timeDiv3.attr('id', 'timeDiv3');
+							var hTag5b = $('<h4>');
+							hTag5b.append("&nbsp;");
+							//hTag3b.append(data[i].event_1_desc);
+							hTag5b.append("&nbsp;&nbsp; ");
+							hTag5b.append(data[i].event_3_time);
+							timeDiv3.append(hTag5b);
+
+							divLine03.append(timeDiv3);
+							mainDiv.append(divLine03);
+							setDivStatus(idStr03, data[i].event_3_code)
+
+							$('#div03h').addClass('statDivHead');
+							$('#timeDiv3').addClass('statDivHead');
+
+							var hTag5c = $('<h4>');
+							hTag5c.append("<br/>");
+							hTag5c.append("<br/>");
+							mainDiv.append(hTag5c);
+
+
+
+							//wrap a div around one line, not really a row, but kind of like it
+							var divLine04 = $('<div>');
+
+							//wrap div around text to make it float next to colored stat rectangle
+							var divTag06h =$('<div>');
+							divTag06h.attr('id', 'div04h');
 
 							var hTag6 = $('<h4>');
-							//hTag6.append("<br/>");
-							hTag6.append("<br/>");
-							hTag6.append("#4: &nbsp;");
-							hTag6.append(data[i].event_4_desc);
-							hTag6.append("&nbsp;&nbsp; @<br/>");
-							hTag6.append(data[i].event_4_time);
-							mainDiv.append(hTag6);
+							hTag6.append("4: &nbsp;");
+							divTag06h.append(hTag6);
+							divLine04.append(divTag06h);
 
+							//the current status is 4
+							let statusDiv4 = createStatusDiv(4);
+							let idStr04 = statusDiv4[0];
+							var divTag04 = statusDiv4[1];
+							divLine04.append(divTag04);
 
-							var divTag = $('<div>');
-							divTag.attr('id', 'currStatus');
-							//var imgTag = $('<img src="'+'/images/Blank_01.jpg">');
-							//divTag.append(imgTag);
-							mainDiv.append(divTag);
+							var timeDiv4 = $('<div>');
+							timeDiv4.attr('id', 'timeDiv4');
+							var hTag6b = $('<h4>');
+							hTag6b.append("&nbsp;");
+							hTag6b.append("&nbsp;&nbsp; ");
+							hTag6b.append(data[i].event_4_time);
+							timeDiv4.append(hTag6b);
 
-							var idStr = "#currStatus";
-							var statusStr = "statusOffFull";
-							var statusDec = "";  //description to print
-							$(idStr).removeClass(statusStr);
-							statusStr = "statusOnFull";
-							$(idStr).removeClass(statusStr);
-							statusStr = "statusRunFull";
-							$(idStr).removeClass(statusStr);
-							statusStr = "statusHoldFull";
-							$(idStr).removeClass(statusStr);
+							divLine04.append(timeDiv4);
+							mainDiv.append(divLine04);
+							setDivStatus(idStr04, data[i].event_4_code)
 
-							switch (data[i].mach_stat_code) {
-								case "00":
-						  			statusStr = "statusOffFull"; 
-									statusDesc = "off-line";
-						  			break;
-								case "01":
-									statusStr = "statusOnFull";
-									statusDesc = "not running";
-						  			break;
-								case "03":
-									statusStr = "statusRunFull";
-									statusDesc = "running";
-						  			break;
-								case "09":
-									statusStr = "statusHoldFull";
-									statusDesc = "warning";
-						  			break;    
-							};
-							$(idStr).addClass(statusStr);
+							$('#div04h').addClass('statDivHead');
+							$('#timeDiv4').addClass('statDivHead');
 
-							//current status description
-							var hTag7 = $('<h4>')
-							hTag7.append(statusDesc);
-
-							//fault code
-							var brTag_06 = $('<br/>');
-							var brTag_07 = $('<br/>');
-							hTag7.append(brTag_06);
-							hTag7.append(brTag_07);
+							var hTag6c = $('<h4>');
+							//hTag6c.append("<br/>");
+							//hTag6c.append("<br/>");
+							mainDiv.append(hTag6c);
 
 						}; //else a single machine
 					};  //mach num not '99' or '98'

@@ -335,33 +335,62 @@ router.post('/read-rt-data', function(req, res, next) {
         //output for a single machine
         function outputObj2(_machNum,
             _mach_stat_code,
+            _event_1_code,
             _event_1_desc,
             _event_1_time,
             _event_1_dur,
+            _event_2_code,
             _event_2_desc,
             _event_2_time,
             _event_2_dur,
+            _event_3_code,
             _event_3_desc,
             _event_3_time,
             _event_3_dur,
+            _event_4_code,
             _event_4_desc,
             _event_4_time,
             _event_4_dur
         ) {
             this.mach_num = _machNum,
                 this.mach_stat_code = _mach_stat_code,
+                this.event_1_code = _event_1_code,
                 this.event_1_desc = _event_1_desc,
                 this.event_1_time = _event_1_time,
                 this.event_1_dur = _event_1_dur,
+                this.event_2_code = _event_2_code,
                 this.event_2_desc = _event_2_desc,
                 this.event_2_time = _event_2_time,
                 this.event_2_dur = _event_2_dur,
+                this.event_3_code = _event_3_code,
                 this.event_3_desc = _event_3_desc,
                 this.event_3_time = _event_3_time,
                 this.event_3_dur = _event_3_dur,
+                this.event_4_code = _event_4_code,
                 this.event_4_desc = _event_4_desc,
                 this.event_4_time = _event_4_time,
                 this.event_4_dur = _event_4_dur
+        };
+
+        function statusCodeForEvent(_eventDesc) {
+            //convert the stored event description to a status code
+            //needed because the original mach_stat table does not store the status code
+            let outputCode = "00";
+            switch (_eventDesc) {
+                case "off line":
+                    outputCode = "00";
+                    break;
+                case "stop":
+                    outputCode = "01";
+                    break;
+                case "start":
+                    outputCode = "03";
+                    break;
+                case "warning":
+                    outputCode = "09";
+                    break;
+            };
+            return outputCode;
         };
 
         let updateDate = moment();
@@ -421,15 +450,19 @@ router.post('/read-rt-data', function(req, res, next) {
                         dataOutput.push(new outputObj2(
                             response[0].mach_num,
                             response[0].mach_stat_code,
+                            statusCodeForEvent(response[0].event_1_desc),
                             response[0].event_1_desc,
                             event_1_time_str,
                             response[0].event_1_dur,
+                            statusCodeForEvent(response[0].event_2_desc),
                             response[0].event_2_desc,
                             event_2_time_str,
                             response[0].event_2_dur,
+                            statusCodeForEvent(response[0].event_3_desc),
                             response[0].event_3_desc,
                             event_3_time_str,
                             response[0].event_3_dur,
+                            statusCodeForEvent(response[0].event_4_desc),
                             response[0].event_4_desc,
                             event_4_time_str,
                             response[0].event_4_dur
