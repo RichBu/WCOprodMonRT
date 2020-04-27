@@ -96,3 +96,16 @@ CREATE TABLE mach_stat (
     event_4_dur VARCHAR(15),
     PRIMARY KEY (mach_num)
 )
+
+
+CREATE TABLE phone_entries (
+    phone_id INT NOT NULL AUTO_INCREMENT,
+    ip_addr VARCHAR(16),
+    phone_name VARCHAR(20),
+    phone_num VARCHAR(20),
+    is_admin INT,
+    mach_watch VARCHAR(2),
+    is_active,
+    PRIMARY KEY (phone_id)
+);
+

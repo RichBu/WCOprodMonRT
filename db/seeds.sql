@@ -213,3 +213,14 @@ INSERT INTO mach_stat (
     " ", "00", "00",
     " ", "00", "00"
 );
+
+
+INSERT INTO phone_entries (
+    ip_addr, phone_num, is_admin, mach_watch, is_active
+) VALUES (
+    "10.10.10.100",
+    "312-933-4960",
+    "1",
+    "*",
+    "1"
+);

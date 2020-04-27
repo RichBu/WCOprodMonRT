@@ -35,6 +35,56 @@ class userLogRecStoreType {
 };
 
 
+class phone_entries {
+    //phone entries in the database and read into an array
+    constructor(_phone_id,
+        _ip_addr,
+        _phone_name,
+        _phone_num,
+        _is_admin,
+        _mach_watch,
+        _is_active,
+    ) {
+        this.phone_id = _phone_id;
+        this.ip_addr = _ip_addr;
+        this.phone_name = _phone_name;
+        this.phone_num = _phone_num;
+        this.is_admin = _is_admin;
+        this.mach_watch = _mach_watch;
+        this.is_active = _is_active
+    }
+};
+
+
+class phone_text_message {
+    //phone text messages
+    constructor(_phone_id,
+        _ip_addr,
+        _phone_name,
+        _phone_num,
+        _is_admin,
+        _mach_watch,
+        _is_active,
+        _time_msg_str,
+        _time_msg_unix,
+        _mach_num,
+        _mach_message
+    ) {
+        this.phone_id = _phone_id;
+        this.ip_addr = _ip_addr;
+        this.phone_name = _phone_name;
+        this.phone_num = _phone_num;
+        this.is_admin = _is_admin;
+        this.mach_watch = _mach_watch;
+        this.is_active = _is_active
+        this.time_msg_str = _time_msg_str,
+            this.time_msg_unix = _time_msg_unix,
+            this.mach_num = _mach_num,
+            this.mach_message = _mach_message
+    }
+};
+
+
 
 //post route to store RT data
 router.post('/update-rt-data', function(req, res, next) {
