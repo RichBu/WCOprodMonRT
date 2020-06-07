@@ -216,9 +216,10 @@ INSERT INTO mach_stat (
 
 
 INSERT INTO phone_entries (
-    ip_addr, phone_num, is_admin, mach_watch, is_active
+    ip_addr, phone_name, phone_num, is_admin, mach_watch, is_active
 ) VALUES (
     "10.10.10.100",
+    "Rich Budek",
     "312-933-4960",
     "1",
     "*",

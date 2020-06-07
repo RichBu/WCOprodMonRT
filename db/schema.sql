@@ -105,7 +105,7 @@ CREATE TABLE phone_entries (
     phone_num VARCHAR(20),
     is_admin INT,
     mach_watch VARCHAR(2),
-    is_active,
+    is_active INT,
     PRIMARY KEY (phone_id)
 );
 

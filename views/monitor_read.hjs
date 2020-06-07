@@ -61,6 +61,8 @@
 					<br/>
 					<button id="btn-stopRead" class="calcButton btn btn-primary" >Stop Reading</button>	
 					<br/>
+					<button id="btn-textAlert" class="calcButton btn btn-primary" >Text Alert</button>	
+					<br/>
 					<br/>
 					<br/><h3>&nbsp;</h3>
 				</div>				
@@ -123,7 +125,7 @@
 				<h3>WCO Production Monitoring</h3>
 				<div class="divider"></div>
 				<h4>
-					<br/>This page keeps polling the backend every 10 seconds once you 
+					<br/>This page keeps polling the backend every 5 seconds once you 
 					press the Start Reading button.  It will keep reading until you 
 					press the Stop Reading button.  To conserve battery power and data 
 					usage, press the Stop Reading button
@@ -578,25 +580,33 @@
 
 
 		  $('#btn-startRead').on('click', function (event) {
-			  event.preventDefault();
-			  console.log("clicked read button");
-			  tmrCounts = 0;
-			  tmrHandle = setInterval(tmrClick,1000);  //2000 or 2 secs is about min can do
-			  readData();
+			event.preventDefault();
+			console.log("clicked read button");
+			tmrCounts = 0;
+			tmrHandle = setInterval(tmrClick,1000);  //2000 or 2 secs is about min can do
+			let startButton = $("#btn-startRead");
+			$(startButton).css("display", "none");		
+			let stopButton = $("#btn-stopRead");
+			$(stopButton).css("display", "block");		
+			readData();
 		  });
 
 
 		  $('#btn-stopRead').on('click', function (event) {
-			  event.preventDefault();
-			  console.log("clicked pause button");
-			  clearInterval(tmrHandle);
-			  for (var i=0; i<9; i++) {
+			event.preventDefault();
+			console.log("clicked pause button");
+			clearInterval(tmrHandle);
+			for (var i=0; i<9; i++) {
 				var machNum = i+1;  
 				var idStr = "#M0" + machNum.toString().trim();
 				$(idStr).removeClass();
 				var statusStr = "statusOff";
 				$(idStr).addClass(statusStr);
-				};
+			};
+			let startButton = $("#btn-startRead");
+			$(startButton).css("display", "block");		
+			let stopButton = $("#btn-stopRead");
+			$(stopButton).css("display", "none");		
 		  });
 
 			$('#monitor-form').submit(function(event){	
@@ -628,6 +638,12 @@
 					readData();
 				};
 			});
+
+			//first time thru the loop turn on the correct buttons
+			let startButton = $("#btn-startRead");
+			$(startButton).css("display", "block");		
+			let stopButton = $("#btn-stopRead");
+			$(stopButton).css("display", "none");		
 
 			displayDiv(1); //display all machines
 
